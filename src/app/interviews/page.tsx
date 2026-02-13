@@ -51,6 +51,24 @@ export default function InterviewsPage() {
           </button>
         </div>
 
+        {interviews.length === 0 && (
+          <div className="flex flex-col items-center justify-center gap-4 rounded-card border-2 border-dashed border-terrazzo-grey p-12 text-center">
+            <h2 className="type-h4 text-carbon-black/60">Noch keine Interviews</h2>
+            <p className="type-body text-carbon-black/40">Erstelle dein erstes Discovery Interview, um loszulegen.</p>
+            <button
+              type="button"
+              onClick={() => {
+                createInterview('Neues Interview')
+                router.push('/')
+              }}
+              className="inline-flex items-center gap-2 rounded-button bg-botanical-green px-4 py-2.5 text-sm font-semibold text-studio-white shadow-level1"
+            >
+              <Plus className="size-4" />
+              Neues Interview erstellen
+            </button>
+          </div>
+        )}
+
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {interviews.map((interview) => {
             const isActive = interview.id === activeInterviewId

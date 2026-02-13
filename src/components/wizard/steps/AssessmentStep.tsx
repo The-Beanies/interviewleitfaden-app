@@ -1,9 +1,11 @@
 'use client'
 
+import { InfoTooltip } from '@/components/ui/info-tooltip'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
 import { Textarea } from '@/components/ui/textarea'
+import { TOOLTIP_TEXT } from '@/config/tooltips'
 import { useInterviewStore } from '@/stores/interview-store'
 
 import type { WizardStepProps } from './types'
@@ -21,22 +23,28 @@ export function AssessmentStep({ interview }: WizardStepProps) {
 
       <ScoreSlider
         label="Relevanz"
+        tooltip={TOOLTIP_TEXT.relevanzScore}
         value={assessment.relevanceScore}
         onChange={(value) => updateOverallAssessment({ relevanceScore: value as 1 | 2 | 3 | 4 | 5 })}
       />
       <ScoreSlider
         label="Schmerzintensität"
+        tooltip={TOOLTIP_TEXT.painIntensityScore}
         value={assessment.painIntensityScore}
         onChange={(value) => updateOverallAssessment({ painIntensityScore: value as 1 | 2 | 3 | 4 | 5 })}
       />
       <ScoreSlider
         label="STEVE-Fit"
+        tooltip={TOOLTIP_TEXT.steveFitScore}
         value={assessment.steveFitScore}
         onChange={(value) => updateOverallAssessment({ steveFitScore: value as 1 | 2 | 3 | 4 | 5 })}
       />
 
       <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
-        <Label>Nachfass-Priorität</Label>
+        <div className="flex items-center gap-1">
+          <Label>Nachfass-Priorität</Label>
+          <InfoTooltip text={TOOLTIP_TEXT.followUpPriority} />
+        </div>
         <Select
           value={assessment.followUpPriority}
           onChange={(event) =>
@@ -93,17 +101,22 @@ export function AssessmentStep({ interview }: WizardStepProps) {
 
 function ScoreSlider({
   label,
+  tooltip,
   value,
   onChange,
 }: {
   label: string
+  tooltip?: string
   value: number
   onChange: (value: number) => void
 }) {
   return (
     <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
       <div className="flex items-center justify-between">
-        <Label>{label}</Label>
+        <div className="flex items-center gap-1">
+          <Label>{label}</Label>
+          {tooltip ? <InfoTooltip text={tooltip} /> : null}
+        </div>
         <span className="text-sm font-semibold text-carbon-black">{value}/5</span>
       </div>
       <Slider min={1} max={5} step={1} value={value} onValueChange={onChange} />

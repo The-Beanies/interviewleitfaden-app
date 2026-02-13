@@ -17,6 +17,39 @@ export function CoreFactsSection({ facts }: { facts: CoreFacts }) {
         <Field label="Telefon" value={facts.contactPhone} />
         <Field label="Empfohlen von" value={facts.referredBy} />
       </div>
+
+      {facts.businessDescription && (
+        <div className="mt-3 rounded-button border border-terrazzo-grey bg-terrazzo-grey/10 px-3 py-2">
+          <p className="type-caption uppercase tracking-wide text-carbon-black/50">Geschäftsbeschreibung</p>
+          <p className="type-body text-carbon-black">{facts.businessDescription}</p>
+        </div>
+      )}
+
+      {facts.additionalFounders && facts.additionalFounders.length > 0 && (
+        <div className="mt-3 space-y-2">
+          <p className="type-caption uppercase tracking-wide text-carbon-black/50">Weitere Gründer:innen</p>
+          <div className="grid gap-2 md:grid-cols-2">
+            {facts.additionalFounders.map((founder) => (
+              <div
+                key={founder.id}
+                className="rounded-button border border-terrazzo-grey bg-terrazzo-grey/10 px-3 py-2"
+              >
+                <p className="type-body font-semibold text-carbon-black">{founder.name || '-'}</p>
+                <p className="type-caption text-carbon-black/60">
+                  {founder.role || '-'} · {founder.contact || '-'}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {facts.notes && (
+        <div className="mt-3 rounded-button border border-terrazzo-grey bg-terrazzo-grey/10 px-3 py-2">
+          <p className="type-caption uppercase tracking-wide text-carbon-black/50">Notizen</p>
+          <p className="type-body whitespace-pre-wrap text-carbon-black">{facts.notes}</p>
+        </div>
+      )}
     </SectionWrapper>
   )
 }

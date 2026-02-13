@@ -1,7 +1,8 @@
 'use client'
 
 import { SectionStepBase } from './SectionStepBase'
+import type { WizardStepProps } from './types'
 
-export function WarmupStep() {
-  return <SectionStepBase sectionKey="warmup" />
+export function WarmupStep({ onNext }: WizardStepProps) {
+  return <SectionStepBase sectionKey="warmup" onMarkComplete={onNext} />
 }

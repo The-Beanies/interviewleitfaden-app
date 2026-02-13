@@ -34,6 +34,15 @@ export interface InterviewQuestion {
   category?: string
 }
 
+// --- Additional Founder ---
+
+export interface AdditionalFounder {
+  id: string
+  name: string
+  role: string
+  contact: string
+}
+
 // --- Section Notes ---
 
 export interface SectionNote {
@@ -66,6 +75,9 @@ export interface CoreFacts {
   contactEmail: string
   contactPhone: string
   referredBy: string
+  additionalFounders: AdditionalFounder[]
+  businessDescription: string
+  notes: string
 }
 
 // --- JTBD Analysis ---
@@ -156,6 +168,7 @@ export interface InterviewConfig {
   summary: PostInterviewSummary
   checklist: ChecklistItem[]
   timerState: TimerState
+  customQuestions: Record<InterviewSectionKey, InterviewQuestion[]>
 }
 
 // --- Interview (top-level) ---

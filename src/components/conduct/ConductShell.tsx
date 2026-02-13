@@ -81,15 +81,18 @@ export function ConductShell() {
 
         <SectionCard sectionKey={sectionKey} />
 
-        <div className="grid gap-2 rounded-card border border-terrazzo-grey bg-studio-white p-3 shadow-level1 sm:grid-cols-2 lg:grid-cols-6">
+        <div className="grid grid-cols-2 gap-2 rounded-card border border-terrazzo-grey bg-studio-white p-3 shadow-level1 md:grid-cols-3 lg:grid-cols-6">
           <Button variant="outline" className="min-h-12" onClick={prevSection} disabled={sectionIndex === 0}>
-            Vorherige
+            <span className="sm:hidden">Zurück</span>
+            <span className="hidden sm:inline">Vorherige</span>
           </Button>
           <Button variant="outline" className="min-h-12" onClick={nextSection} disabled={sectionIndex === SECTION_KEYS.length - 1}>
-            Nächste
+            <span className="sm:hidden">Weiter</span>
+            <span className="hidden sm:inline">Nächste</span>
           </Button>
           <Button variant="outline" className="min-h-12" onClick={resetSection}>
-            Abschnitt zurücksetzen
+            <span className="sm:hidden">Reset</span>
+            <span className="hidden sm:inline">Abschnitt zurücksetzen</span>
           </Button>
           <Button variant="outline" className="min-h-12" onClick={isPaused ? resume : pause}>
             {isPaused ? 'Fortsetzen' : 'Pausieren'}
@@ -99,10 +102,12 @@ export function ConductShell() {
             className="min-h-12"
             onClick={() => updateStatus('in_durchfuehrung')}
           >
-            Als laufend markieren
+            <span className="sm:hidden">Laufend</span>
+            <span className="hidden sm:inline">Als laufend markieren</span>
           </Button>
           <Button className="min-h-12" onClick={() => updateStatus('abgeschlossen')}>
-            Als abgeschlossen markieren
+            <span className="sm:hidden">Fertig</span>
+            <span className="hidden sm:inline">Als abgeschlossen markieren</span>
           </Button>
         </div>
       </div>

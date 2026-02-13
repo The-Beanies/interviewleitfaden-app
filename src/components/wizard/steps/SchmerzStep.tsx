@@ -5,14 +5,15 @@ import { mockAIService } from '@/services/ai-mock'
 import { useInterviewStore } from '@/stores/interview-store'
 
 import { SectionStepBase } from './SectionStepBase'
+import type { WizardStepProps } from './types'
 
-export function SchmerzStep() {
+export function SchmerzStep({ onNext }: WizardStepProps) {
   const interview = useInterviewStore((state) => state.getActiveInterview())
   const updateSummary = useInterviewStore((state) => state.updateSummary)
 
   return (
     <div className="space-y-4">
-      <SectionStepBase sectionKey="schmerz_workarounds" />
+      <SectionStepBase sectionKey="schmerz_workarounds" onMarkComplete={onNext} />
       <div className="rounded-card border border-terrazzo-grey bg-terrazzo-grey/10 p-3">
         <p className="mb-2 text-sm font-semibold text-carbon-black">KI-Unterstützung</p>
         <AISuggestButton

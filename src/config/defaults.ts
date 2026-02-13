@@ -64,7 +64,7 @@ export const PAGE_NAMES = [
 ] as const
 
 export const STEVE_PITCH_TEXT =
-  'TODO: Exakten 30-Sekunden-STEVE-Pitch aus Discovery Interview Outline.md einfügen. Aktuelle Placeholder-Version: STEVE hilft Gründer:innen, repetitive Gründungsarbeit zu automatisieren und schneller Entscheidungen zu treffen.'
+  'Stell dir vor, du hättest einen KI-gestützten Co-Piloten für deine Gründung — wir nennen ihn STEVE. STEVE begleitet dich von der ersten Idee bis zum fertigen Businessplan. Er hilft dir, deinen Markt zu verstehen, dein Geschäftsmodell zu validieren, und erstellt dir bankfertige Unterlagen — alles in einem Tool, für einen Bruchteil der Kosten einer klassischen Beratung. Du sagst STEVE, was du vorhast, und er führt dich Schritt für Schritt durch den Prozess.'
 
 const QUESTION_SETS: Record<InterviewSectionKey, InterviewQuestion[]> = {
   warmup: [
@@ -323,6 +323,9 @@ export function createDefaultCoreFacts(): CoreFacts {
     contactEmail: '',
     contactPhone: '',
     referredBy: '',
+    additionalFounders: [],
+    businessDescription: '',
+    notes: '',
   }
 }
 
@@ -411,6 +414,17 @@ function createDefaultPainPoints(): PainPoint[] {
   return []
 }
 
+export function createDefaultCustomQuestions(): Record<InterviewSectionKey, InterviewQuestion[]> {
+  return {
+    warmup: [],
+    gruendungsreise: [],
+    schmerz_workarounds: [],
+    ki_automatisierung: [],
+    konzepttest_steve: [],
+    abschluss: [],
+  }
+}
+
 export function createDefaultInterviewConfig(): InterviewConfig {
   const coreFacts = createDefaultCoreFacts()
   const summary = createDefaultSummary(coreFacts)
@@ -425,6 +439,7 @@ export function createDefaultInterviewConfig(): InterviewConfig {
     },
     checklist: createDefaultChecklist(),
     timerState: createDefaultTimerState(),
+    customQuestions: createDefaultCustomQuestions(),
   }
 }
 

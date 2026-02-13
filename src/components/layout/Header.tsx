@@ -4,9 +4,11 @@ import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 
-import { Download, FileSpreadsheet, Menu, X } from 'lucide-react'
+import { Download, FileSpreadsheet, LogOut, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Select } from '@/components/ui/select'
+import { SyncIndicator } from '@/components/ui/sync-indicator'
+import { useAuth } from '@/hooks/use-auth'
 import {
   downloadInterviewPDF,
   downloadInterviewPreviewCSV,
@@ -26,19 +28,28 @@ export function Header() {
   const pathname = usePathname()
   const router = useRouter()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user, signOut } = useAuth()
 
-  const activeInterview = useInterviewStore((state) => state.getActiveInterview())
-  const interviews = useInterviewStore((state) => state.interviews)
   const activeInterviewId = useInterviewStore((state) => state.activeInterviewId)
+  const activeInterviewName = useInterviewStore((state) => {
+    const active = state.interviews.find((i) => i.id === state.activeInterviewId)
+    return active?.name ?? 'Unbenanntes Interview'
+  })
+  const interviews = useInterviewStore((state) => state.interviews)
+  const interviewOptions = useMemo(
+    () => interviews.map((i) => ({ id: i.id, name: i.name })),
+    [interviews],
+  )
+  const getActiveInterview = useInterviewStore((state) => state.getActiveInterview)
   const setActiveInterview = useInterviewStore((state) => state.setActiveInterview)
   const createInterview = useInterviewStore((state) => state.createInterview)
 
   const isInterviewsRoute = pathname === '/interviews'
 
   const shortName = useMemo(() => {
-    if (activeInterview.name.length <= 42) return activeInterview.name
-    return `${activeInterview.name.slice(0, 39)}...`
-  }, [activeInterview.name])
+    if (activeInterviewName.length <= 42) return activeInterviewName
+    return `${activeInterviewName.slice(0, 39)}...`
+  }, [activeInterviewName])
 
   return (
     <header className="sticky top-0 z-40 border-b border-terrazzo-grey bg-studio-white/95 backdrop-blur">
@@ -90,7 +101,7 @@ export function Header() {
                 }}
                 className="hidden min-w-[190px] max-w-[260px] md:block"
               >
-                {interviews.map((interview) => (
+                {interviewOptions.map((interview) => (
                   <option key={interview.id} value={interview.id}>
                     {interview.name}
                   </option>
@@ -107,18 +118,44 @@ export function Header() {
                 Neu
               </Button>
 
-              <Button variant="outline" onClick={() => downloadInterviewPDF(activeInterview)}>
+              <Button
+                variant="outline"
+                className="hidden sm:inline-flex"
+                aria-label="PDF exportieren"
+                onClick={() => downloadInterviewPDF(getActiveInterview())}
+              >
                 <Download className="size-4" />
                 PDF
               </Button>
 
-              <Button variant="outline" onClick={() => downloadInterviewPreviewCSV(activeInterview)}>
+              <Button
+                variant="outline"
+                className="hidden sm:inline-flex"
+                aria-label="CSV exportieren"
+                onClick={() => downloadInterviewPreviewCSV(getActiveInterview())}
+              >
                 <FileSpreadsheet className="size-4" />
                 CSV
               </Button>
             </>
           ) : (
             <p className="truncate text-sm text-carbon-black/60">Aktiv: {shortName}</p>
+          )}
+
+          {/* Auth section */}
+          {user && (
+            <div className="hidden items-center gap-2 border-l border-terrazzo-grey pl-2 sm:flex">
+              <SyncIndicator />
+              <span className="max-w-[140px] truncate text-xs text-carbon-black/50">{user.email}</span>
+              <button
+                type="button"
+                onClick={() => signOut()}
+                aria-label="Abmelden"
+                className="rounded p-2 text-carbon-black/40 hover:text-carbon-black/70 transition-colors"
+              >
+                <LogOut className="size-4" />
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -141,6 +178,56 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+
+          {/* Mobile export buttons */}
+          {!isInterviewsRoute && (
+            <div className="mt-2 flex gap-2 border-t border-terrazzo-grey pt-2">
+              <Button
+                variant="outline"
+                size="sm"
+                aria-label="PDF exportieren"
+                onClick={() => {
+                  downloadInterviewPDF(getActiveInterview())
+                  setMobileMenuOpen(false)
+                }}
+              >
+                <Download className="size-4" />
+                PDF
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                aria-label="CSV exportieren"
+                onClick={() => {
+                  downloadInterviewPreviewCSV(getActiveInterview())
+                  setMobileMenuOpen(false)
+                }}
+              >
+                <FileSpreadsheet className="size-4" />
+                CSV
+              </Button>
+            </div>
+          )}
+
+          {/* Mobile auth section */}
+          {user && (
+            <div className="mt-2 flex items-center gap-2 border-t border-terrazzo-grey pt-2">
+              <SyncIndicator />
+              <span className="flex-1 truncate text-xs text-carbon-black/50">{user.email}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  signOut()
+                  setMobileMenuOpen(false)
+                }}
+                aria-label="Abmelden"
+                className="inline-flex items-center gap-1 rounded p-2 text-xs text-carbon-black/60 hover:text-carbon-black/80"
+              >
+                <LogOut className="size-4" />
+                Abmelden
+              </button>
+            </div>
+          )}
         </nav>
       )}
     </header>

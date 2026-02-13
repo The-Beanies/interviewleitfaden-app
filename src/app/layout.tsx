@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter, Manrope } from 'next/font/google'
 
+import { AuthSync } from '@/components/auth/AuthSync'
+import StorageWarning from '@/components/ui/storage-warning'
+
 import './globals.css'
 
 const manrope = Manrope({
@@ -45,6 +48,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         >
           Zum Inhalt springen
         </a>
+        <AuthSync />
+        <StorageWarning />
         {children}
       </body>
     </html>

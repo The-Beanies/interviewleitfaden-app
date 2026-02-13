@@ -6,14 +6,18 @@ import { persist } from 'zustand/middleware'
 import {
   createDefaultInterview,
   createDefaultInterviewConfig,
+  createDefaultCustomQuestions,
   createDefaultSummary,
+  SECTION_KEYS,
 } from '@/config/defaults'
 import { createId } from '@/lib/utils'
 import { useWizardStore } from '@/stores/wizard-store'
 import type {
+  AdditionalFounder,
   CoreFacts,
   Interview,
   InterviewConfig,
+  InterviewQuestion,
   InterviewSectionKey,
   InterviewStatus,
   JTBDAnalysis,
@@ -50,6 +54,11 @@ interface InterviewStore {
   updateSteveReaction: (payload: Partial<SteveReaction>) => void
   updateOverallAssessment: (payload: Partial<OverallAssessment>) => void
   replaceActiveConfig: (config: InterviewConfig) => void
+  addFounder: () => void
+  updateFounder: (id: string, payload: Partial<AdditionalFounder>) => void
+  removeFounder: (id: string) => void
+  addCustomQuestion: (sectionKey: InterviewSectionKey, text: string) => void
+  removeCustomQuestion: (sectionKey: InterviewSectionKey, questionId: string) => void
 }
 
 function withUpdatedInterview(
@@ -78,6 +87,9 @@ function mergeSummaryWithDefaults(summary: unknown, coreFacts?: CoreFacts): Post
     coreFacts: {
       ...defaults.coreFacts,
       ...(incoming.coreFacts ?? {}),
+      additionalFounders: Array.isArray(incoming.coreFacts?.additionalFounders)
+        ? incoming.coreFacts.additionalFounders
+        : defaults.coreFacts.additionalFounders,
     },
     jtbd: {
       ...defaults.jtbd,
@@ -140,56 +152,37 @@ function mergeConfigWithDefaults(config: unknown): InterviewConfig {
   const coreFacts = {
     ...defaults.coreFacts,
     ...(incoming.coreFacts ?? {}),
+    additionalFounders: Array.isArray(incoming.coreFacts?.additionalFounders)
+      ? incoming.coreFacts.additionalFounders
+      : defaults.coreFacts.additionalFounders,
+  }
+
+  // Build sectionNotes using SECTION_KEYS loop for DRY
+  const sectionNotes = {} as Record<InterviewSectionKey, (typeof defaults.sectionNotes)[InterviewSectionKey]>
+  for (const key of SECTION_KEYS) {
+    sectionNotes[key] = {
+      ...defaults.sectionNotes[key],
+      ...(incoming.sectionNotes?.[key] ?? {}),
+      quotes: Array.isArray(incoming.sectionNotes?.[key]?.quotes)
+        ? incoming.sectionNotes![key].quotes
+        : defaults.sectionNotes[key].quotes,
+    }
+  }
+
+  // Merge customQuestions
+  const defaultCustomQuestions = createDefaultCustomQuestions()
+  const customQuestions = {} as Record<InterviewSectionKey, InterviewQuestion[]>
+  for (const key of SECTION_KEYS) {
+    customQuestions[key] = Array.isArray(incoming.customQuestions?.[key])
+      ? incoming.customQuestions![key]
+      : defaultCustomQuestions[key]
   }
 
   return {
     ...defaults,
     ...incoming,
     coreFacts,
-    sectionNotes: {
-      warmup: {
-        ...defaults.sectionNotes.warmup,
-        ...(incoming.sectionNotes?.warmup ?? {}),
-        quotes: Array.isArray(incoming.sectionNotes?.warmup?.quotes)
-          ? incoming.sectionNotes.warmup.quotes
-          : defaults.sectionNotes.warmup.quotes,
-      },
-      gruendungsreise: {
-        ...defaults.sectionNotes.gruendungsreise,
-        ...(incoming.sectionNotes?.gruendungsreise ?? {}),
-        quotes: Array.isArray(incoming.sectionNotes?.gruendungsreise?.quotes)
-          ? incoming.sectionNotes.gruendungsreise.quotes
-          : defaults.sectionNotes.gruendungsreise.quotes,
-      },
-      schmerz_workarounds: {
-        ...defaults.sectionNotes.schmerz_workarounds,
-        ...(incoming.sectionNotes?.schmerz_workarounds ?? {}),
-        quotes: Array.isArray(incoming.sectionNotes?.schmerz_workarounds?.quotes)
-          ? incoming.sectionNotes.schmerz_workarounds.quotes
-          : defaults.sectionNotes.schmerz_workarounds.quotes,
-      },
-      ki_automatisierung: {
-        ...defaults.sectionNotes.ki_automatisierung,
-        ...(incoming.sectionNotes?.ki_automatisierung ?? {}),
-        quotes: Array.isArray(incoming.sectionNotes?.ki_automatisierung?.quotes)
-          ? incoming.sectionNotes.ki_automatisierung.quotes
-          : defaults.sectionNotes.ki_automatisierung.quotes,
-      },
-      konzepttest_steve: {
-        ...defaults.sectionNotes.konzepttest_steve,
-        ...(incoming.sectionNotes?.konzepttest_steve ?? {}),
-        quotes: Array.isArray(incoming.sectionNotes?.konzepttest_steve?.quotes)
-          ? incoming.sectionNotes.konzepttest_steve.quotes
-          : defaults.sectionNotes.konzepttest_steve.quotes,
-      },
-      abschluss: {
-        ...defaults.sectionNotes.abschluss,
-        ...(incoming.sectionNotes?.abschluss ?? {}),
-        quotes: Array.isArray(incoming.sectionNotes?.abschluss?.quotes)
-          ? incoming.sectionNotes.abschluss.quotes
-          : defaults.sectionNotes.abschluss.quotes,
-      },
-    },
+    sectionNotes,
     allQuotes: Array.isArray(incoming.allQuotes)
       ? incoming.allQuotes.map((quote) => ({
           ...quote,
@@ -212,6 +205,7 @@ function mergeConfigWithDefaults(config: unknown): InterviewConfig {
       ...defaults.timerState,
       ...(incoming.timerState ?? {}),
     },
+    customQuestions,
   }
 }
 
@@ -446,53 +440,40 @@ export const useInterviewStore = create<InterviewStore>()(
       },
       removeQuote: (quoteId) => {
         set((state) => ({
-          interviews: withUpdatedInterview(state, (interview) => ({
-            ...interview,
-            config: {
-              ...interview.config,
-              allQuotes: interview.config.allQuotes.filter((quote) => quote.id !== quoteId),
-              sectionNotes: {
-                warmup: {
-                  ...interview.config.sectionNotes.warmup,
-                  quotes: interview.config.sectionNotes.warmup.quotes.filter((quote) => quote.id !== quoteId),
-                },
-                gruendungsreise: {
-                  ...interview.config.sectionNotes.gruendungsreise,
-                  quotes: interview.config.sectionNotes.gruendungsreise.quotes.filter(
-                    (quote) => quote.id !== quoteId,
-                  ),
-                },
-                schmerz_workarounds: {
-                  ...interview.config.sectionNotes.schmerz_workarounds,
-                  quotes: interview.config.sectionNotes.schmerz_workarounds.quotes.filter(
-                    (quote) => quote.id !== quoteId,
-                  ),
-                },
-                ki_automatisierung: {
-                  ...interview.config.sectionNotes.ki_automatisierung,
-                  quotes: interview.config.sectionNotes.ki_automatisierung.quotes.filter(
-                    (quote) => quote.id !== quoteId,
-                  ),
-                },
-                konzepttest_steve: {
-                  ...interview.config.sectionNotes.konzepttest_steve,
-                  quotes: interview.config.sectionNotes.konzepttest_steve.quotes.filter(
-                    (quote) => quote.id !== quoteId,
-                  ),
-                },
-                abschluss: {
-                  ...interview.config.sectionNotes.abschluss,
-                  quotes: interview.config.sectionNotes.abschluss.quotes.filter(
-                    (quote) => quote.id !== quoteId,
-                  ),
+          interviews: withUpdatedInterview(state, (interview) => {
+            // Find the quote text before removing so we can also filter quotesAboutSteve
+            const removedQuote = interview.config.allQuotes.find((q) => q.id === quoteId)
+
+            // Build filtered sectionNotes using SECTION_KEYS loop (DRY)
+            const sectionNotes = {} as Record<InterviewSectionKey, (typeof interview.config.sectionNotes)[InterviewSectionKey]>
+            for (const key of SECTION_KEYS) {
+              sectionNotes[key] = {
+                ...interview.config.sectionNotes[key],
+                quotes: interview.config.sectionNotes[key].quotes.filter((quote) => quote.id !== quoteId),
+              }
+            }
+
+            return {
+              ...interview,
+              config: {
+                ...interview.config,
+                allQuotes: interview.config.allQuotes.filter((quote) => quote.id !== quoteId),
+                sectionNotes,
+                summary: {
+                  ...interview.config.summary,
+                  keyQuotes: interview.config.summary.keyQuotes.filter((quote) => quote.id !== quoteId),
+                  steveReaction: {
+                    ...interview.config.summary.steveReaction,
+                    quotesAboutSteve: removedQuote
+                      ? interview.config.summary.steveReaction.quotesAboutSteve.filter(
+                          (text) => text !== removedQuote.text,
+                        )
+                      : interview.config.summary.steveReaction.quotesAboutSteve,
+                  },
                 },
               },
-              summary: {
-                ...interview.config.summary,
-                keyQuotes: interview.config.summary.keyQuotes.filter((quote) => quote.id !== quoteId),
-              },
-            },
-          })),
+            }
+          }),
         }))
       },
       updateChecklist: (itemId, checked) => {
@@ -719,6 +700,117 @@ export const useInterviewStore = create<InterviewStore>()(
           })),
         }))
       },
+      addFounder: () => {
+        set((state) => ({
+          interviews: withUpdatedInterview(state, (interview) => {
+            const newFounder: AdditionalFounder = {
+              id: createId('founder'),
+              name: '',
+              role: '',
+              contact: '',
+            }
+            const coreFacts = {
+              ...interview.config.coreFacts,
+              additionalFounders: [...interview.config.coreFacts.additionalFounders, newFounder],
+            }
+            return {
+              ...interview,
+              config: {
+                ...interview.config,
+                coreFacts,
+                summary: {
+                  ...interview.config.summary,
+                  coreFacts,
+                },
+              },
+            }
+          }),
+        }))
+      },
+      updateFounder: (id, payload) => {
+        set((state) => ({
+          interviews: withUpdatedInterview(state, (interview) => {
+            const coreFacts = {
+              ...interview.config.coreFacts,
+              additionalFounders: interview.config.coreFacts.additionalFounders.map((founder) =>
+                founder.id === id ? { ...founder, ...payload } : founder,
+              ),
+            }
+            return {
+              ...interview,
+              config: {
+                ...interview.config,
+                coreFacts,
+                summary: {
+                  ...interview.config.summary,
+                  coreFacts,
+                },
+              },
+            }
+          }),
+        }))
+      },
+      removeFounder: (id) => {
+        set((state) => ({
+          interviews: withUpdatedInterview(state, (interview) => {
+            const coreFacts = {
+              ...interview.config.coreFacts,
+              additionalFounders: interview.config.coreFacts.additionalFounders.filter(
+                (founder) => founder.id !== id,
+              ),
+            }
+            return {
+              ...interview,
+              config: {
+                ...interview.config,
+                coreFacts,
+                summary: {
+                  ...interview.config.summary,
+                  coreFacts,
+                },
+              },
+            }
+          }),
+        }))
+      },
+      addCustomQuestion: (sectionKey, text) => {
+        set((state) => ({
+          interviews: withUpdatedInterview(state, (interview) => {
+            const newQuestion: InterviewQuestion = {
+              id: createId('custom-q'),
+              text,
+              isFollowUp: false,
+              segment: 'both',
+            }
+            return {
+              ...interview,
+              config: {
+                ...interview.config,
+                customQuestions: {
+                  ...interview.config.customQuestions,
+                  [sectionKey]: [...(interview.config.customQuestions[sectionKey] ?? []), newQuestion],
+                },
+              },
+            }
+          }),
+        }))
+      },
+      removeCustomQuestion: (sectionKey, questionId) => {
+        set((state) => ({
+          interviews: withUpdatedInterview(state, (interview) => ({
+            ...interview,
+            config: {
+              ...interview.config,
+              customQuestions: {
+                ...interview.config.customQuestions,
+                [sectionKey]: (interview.config.customQuestions[sectionKey] ?? []).filter(
+                  (q) => q.id !== questionId,
+                ),
+              },
+            },
+          })),
+        }))
+      },
     }),
     {
       name: 'interview-guide-interviews',
@@ -744,4 +836,52 @@ export const useInterviewStore = create<InterviewStore>()(
 
 export function getActiveInterviewConfig() {
   return useInterviewStore.getState().getActiveInterview().config
+}
+
+// --- Supabase Sync ---
+
+let syncDebounceTimer: ReturnType<typeof setTimeout> | null = null
+let currentUserId: string | null = null
+
+export async function initialSync(userId: string) {
+  currentUserId = userId
+  const { fetchInterviews, upsertInterview } = await import('@/lib/supabase/sync')
+  const remote = await fetchInterviews(userId)
+
+  if (remote.length > 0) {
+    useInterviewStore.setState({
+      interviews: remote,
+      activeInterviewId: remote[0].id,
+    })
+  } else {
+    const fresh = createDefaultInterview('Erstes Discovery Interview')
+    useInterviewStore.setState({
+      interviews: [fresh],
+      activeInterviewId: fresh.id,
+    })
+    await upsertInterview(fresh, userId)
+  }
+}
+
+export function startSync() {
+  return useInterviewStore.subscribe(() => {
+    if (!currentUserId) return
+    if (syncDebounceTimer) clearTimeout(syncDebounceTimer)
+    syncDebounceTimer = setTimeout(async () => {
+      if (!currentUserId) return
+      const { upsertInterview } = await import('@/lib/supabase/sync')
+      const interviews = useInterviewStore.getState().interviews
+      for (const interview of interviews) {
+        await upsertInterview(interview, currentUserId)
+      }
+    }, 2000)
+  })
+}
+
+export function stopSync() {
+  currentUserId = null
+  if (syncDebounceTimer) {
+    clearTimeout(syncDebounceTimer)
+    syncDebounceTimer = null
+  }
 }

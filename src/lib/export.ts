@@ -73,12 +73,15 @@ function toMarkdown(interview: Interview) {
 - Name: ${config.coreFacts.intervieweeName || '-'}
 - Segment: ${segmentLabel(config.coreFacts.segment)}
 - Branche: ${config.coreFacts.industry || '-'}
+- Geschäftsbeschreibung: ${config.coreFacts.businessDescription || '-'}
 - Gründungsdatum: ${config.coreFacts.foundingDate || '-'}
 - Teamgröße: ${config.coreFacts.teamSize || '-'}
+- Weitere Gründer: ${config.coreFacts.additionalFounders.length ? config.coreFacts.additionalFounders.map((f) => `${f.name} (${f.role})`).join(', ') : '-'}
 - Ort: ${config.coreFacts.location || '-'}
 - E-Mail: ${config.coreFacts.contactEmail || '-'}
 - Telefon: ${config.coreFacts.contactPhone || '-'}
 - Empfehlung: ${config.coreFacts.referredBy || '-'}
+- Notizen: ${config.coreFacts.notes || '-'}
 
 ## JTBD
 
@@ -163,69 +166,14 @@ export function downloadInterviewMarkdown(interview: Interview) {
   downloadTextFile(toMarkdown(interview), `${interview.name.replace(/\s+/g, '_')}.md`)
 }
 
-export function downloadInterviewPDF(interview: Interview) {
-  const markdown = toMarkdown(interview)
-
-  const html = `<!doctype html>
-<html lang="de">
-  <head>
-    <meta charset="utf-8" />
-    <title>${escapeHtml(interview.name)} – Interviewbericht</title>
-    <style>
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        margin: 32px;
-        color: #262626;
-      }
-      h1 {
-        margin: 0 0 8px 0;
-      }
-      .meta {
-        margin-bottom: 20px;
-        color: #555;
-      }
-      pre {
-        white-space: pre-wrap;
-        word-break: break-word;
-        font-family: inherit;
-        line-height: 1.45;
-        background: #fafafa;
-        border: 1px solid #e0e2e4;
-        border-radius: 12px;
-        padding: 16px;
-      }
-      @media print {
-        body {
-          margin: 16mm;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <h1>${escapeHtml(interview.name)}</h1>
-    <p class="meta">Erstellt: ${new Date(interview.createdAt).toLocaleString('de-DE')} · Aktualisiert: ${new Date(interview.updatedAt).toLocaleString('de-DE')}</p>
-    <pre>${escapeHtml(markdown)}</pre>
-    <script>
-      window.onload = () => {
-        setTimeout(() => window.print(), 150);
-      };
-    </script>
-  </body>
-</html>`
-
-  const blob = new Blob([html], { type: 'text/html;charset=utf-8' })
-  const url = URL.createObjectURL(blob)
-  const printWindow = window.open(url, '_blank')
+export function downloadInterviewPDF(_interview: Interview) {
+  // Open the preview page with print=1 to trigger the browser print dialog
+  // which allows saving as PDF via the styled preview layout
+  const printWindow = window.open('/preview?print=1', '_blank')
   if (!printWindow) {
-    // Fallback: direct download if popup is blocked
-    const anchor = document.createElement('a')
-    anchor.href = url
-    anchor.download = `${interview.name.replace(/\s+/g, '_')}.html`
-    document.body.append(anchor)
-    anchor.click()
-    anchor.remove()
+    // Fallback: alert the user if popup is blocked
+    alert('Popup blockiert. Bitte erlaube Popups für diese Seite und versuche es erneut.')
   }
-  setTimeout(() => URL.revokeObjectURL(url), 5000)
 }
 
 export function downloadInterviewPreviewCSV(interview: Interview) {
@@ -249,9 +197,12 @@ export function downloadInterviewPreviewCSV(interview: Interview) {
     core_founding_date: core.foundingDate,
     core_team_size: core.teamSize,
     core_location: core.location,
+    core_business_description: core.businessDescription,
+    core_additional_founders: core.additionalFounders.map((f) => `${f.name} (${f.role}, ${f.contact})`).join(' | '),
     core_contact_email: core.contactEmail,
     core_contact_phone: core.contactPhone,
     core_referred_by: core.referredBy,
+    core_notes: core.notes,
 
     note_warmup: interview.config.sectionNotes.warmup.content,
     note_gruendungsreise: interview.config.sectionNotes.gruendungsreise.content,

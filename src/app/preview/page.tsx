@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import MobileNav from '@/components/navigation/MobileNav'
@@ -10,6 +10,14 @@ import { useHydrated } from '@/lib/use-hydrated'
 import { useInterviewStore } from '@/stores/interview-store'
 
 export default function PreviewPage() {
+  return (
+    <Suspense>
+      <PreviewContent />
+    </Suspense>
+  )
+}
+
+function PreviewContent() {
   const hydrated = useHydrated()
   const interview = useInterviewStore((state) => state.getActiveInterview())
   const searchParams = useSearchParams()

@@ -1,0 +1,238 @@
+@import 'tailwindcss';
+
+@theme inline {
+  --color-studio-white: #fafafa;
+  --color-carbon-black: #262626;
+  --color-terrazzo-grey: #e0e2e4;
+  --color-nordic-oak: #e6c8a6;
+  --color-botanical-green: #6d8b6e;
+  --color-botanical-green-text: #5a7a5b;
+
+  --color-success: #6d8b6e;
+  --color-warning: #f5a623;
+  --color-error: #d94b4b;
+  --color-info: #4a90d9;
+
+  --font-heading: var(--font-manrope);
+  --font-body: var(--font-inter);
+
+  --shadow-level1: 0 2px 8px rgba(38, 38, 38, 0.05);
+  --shadow-level2: 0 8px 24px rgba(38, 38, 38, 0.12);
+
+  --radius-button: 8px;
+  --radius-card: 12px;
+
+  --color-background: #fafafa;
+  --color-foreground: #262626;
+  --color-primary: #6d8b6e;
+  --color-primary-foreground: #fafafa;
+  --color-muted: #e0e2e4;
+  --color-muted-foreground: #262626;
+  --color-border: #e0e2e4;
+  --color-input: #e0e2e4;
+  --color-ring: #6d8b6e;
+  --color-destructive: #d94b4b;
+}
+
+:root {
+  --brand-section-gap: 48px;
+  --brand-page-padding: 80px;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  background: #fafafa;
+  color: #262626;
+  font-family: var(--font-body);
+  overflow-x: hidden;
+}
+
+.type-display {
+  font-family: var(--font-heading);
+  font-size: 40px;
+  line-height: 110%;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+}
+
+.type-h2 {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  line-height: 120%;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.type-h3 {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  line-height: 130%;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+.type-h4 {
+  font-family: var(--font-heading);
+  font-size: 20px;
+  line-height: 140%;
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+@media (min-width: 768px) {
+  .type-display {
+    font-size: 52px;
+  }
+  .type-h2 {
+    font-size: 40px;
+  }
+  .type-h3 {
+    font-size: 28px;
+  }
+  .type-h4 {
+    font-size: 22px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .type-display {
+    font-size: 64px;
+  }
+  .type-h2 {
+    font-size: 48px;
+  }
+  .type-h3 {
+    font-size: 32px;
+  }
+  .type-h4 {
+    font-size: 24px;
+  }
+}
+
+.type-body-lg {
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 160%;
+  font-weight: 400;
+}
+
+.type-body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 160%;
+  font-weight: 400;
+}
+
+.type-small {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 140%;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+.type-caption {
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 140%;
+  font-weight: 400;
+}
+
+:focus-visible {
+  outline: 2px solid #6d8b6e;
+  outline-offset: 2px;
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* --- Print Styles --- */
+@media print {
+  header, nav, .no-print, button:not(.print-visible) {
+    display: none !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  .shadow-level1, .shadow-level2 {
+    box-shadow: none !important;
+  }
+  main {
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+/* --- CSS Animations (replacing framer-motion) --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-on-scroll {
+  animation: fadeIn 0.6s ease-out both;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out both;
+}
+
+.stagger-children > * {
+  animation: slideUp 0.6s ease-out both;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.5s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.6s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.7s; }
+
+.mobile-nav-enter {
+  animation: slideDown 0.3s ease-in-out both;
+}
+
+.mobile-nav-exit {
+  animation: slideDown 0.3s ease-in-out reverse both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-on-scroll,
+  .animate-slide-up,
+  .stagger-children > *,
+  .mobile-nav-enter,
+  .mobile-nav-exit {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

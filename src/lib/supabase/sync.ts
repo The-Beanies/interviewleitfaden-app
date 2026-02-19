@@ -47,7 +47,6 @@ export async function fetchInterviews(
   const { data, error } = await supabase
     .from('interviews')
     .select('*')
-    .eq('user_id', userId)
     .order('updated_at', { ascending: false })
   if (error) {
     console.error('Failed to fetch interviews:', error.message)

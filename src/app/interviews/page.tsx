@@ -1,7 +1,6 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
 
 import { Calendar, Copy, Globe, Lock, Pencil, Plus, Trash2 } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
@@ -25,16 +24,8 @@ const STATUS_DOT_COLOR: Record<InterviewStatus, string> = {
   abgebrochen: 'bg-[#c0392b]',
 }
 
-const STATUS_PILL_STYLE: Record<InterviewStatus, string> = {
-  geplant: 'bg-cornflower/15 text-cornflower',
-  in_durchfuehrung: 'bg-[#c47d0e]/15 text-[#c47d0e]',
-  abgeschlossen: 'bg-[#1a7a4a]/15 text-[#1a7a4a]',
-  abgebrochen: 'bg-[#c0392b]/15 text-[#c0392b]',
-}
-
 export default function InterviewsPage() {
   const hydrated = useHydrated()
-  const router = useRouter()
 
   const interviews = useInterviewStore((state) => state.interviews)
   const activeInterviewId = useInterviewStore((state) => state.activeInterviewId)
@@ -63,9 +54,9 @@ export default function InterviewsPage() {
     <>
       <Header />
       <main id="main-content" className="min-h-screen bg-cloud-dancer">
-        <div className="mx-auto max-w-6xl px-4 py-10 md:px-8">
+        <div className="mx-auto max-w-4xl px-4 py-10 md:px-8">
           {/* Page header */}
-          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <h1 className="font-[family-name:var(--font-sora)] text-3xl font-bold text-ink">
                 Interviews
@@ -77,10 +68,7 @@ export default function InterviewsPage() {
 
             <button
               type="button"
-              onClick={() => {
-                createInterview('Neues Interview')
-                router.push('/')
-              }}
+              onClick={() => createInterview('Neues Interview')}
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-electric-blue px-8 text-base font-bold text-white shadow-sm transition-colors min-h-[56px] hover:bg-cornflower"
             >
               <Plus className="size-5" />
@@ -99,10 +87,7 @@ export default function InterviewsPage() {
               </p>
               <button
                 type="button"
-                onClick={() => {
-                  createInterview('Neues Interview')
-                  router.push('/')
-                }}
+                onClick={() => createInterview('Neues Interview')}
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-electric-blue px-8 text-base font-bold text-white shadow-sm transition-colors min-h-[56px] hover:bg-cornflower"
               >
                 <Plus className="size-5" />
@@ -111,8 +96,8 @@ export default function InterviewsPage() {
             </div>
           )}
 
-          {/* Interview card grid */}
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {/* Interview list */}
+          <div className="flex flex-col gap-3">
             {sortedInterviews.map((interview) => {
               const isActive = interview.id === activeInterviewId
               const isEditing = editingId === interview.id
@@ -121,42 +106,70 @@ export default function InterviewsPage() {
               return (
                 <div
                   key={interview.id}
-                  className={`group cursor-pointer rounded-card-lg border bg-white p-5 transition-all ${
+                  className={`cursor-pointer rounded-card-lg border bg-white transition-all ${
                     isActive
                       ? 'border-electric-blue ring-2 ring-electric-blue/20 shadow-md'
                       : 'border-cloud-dancer shadow-sm hover:shadow-md hover:border-cornflower'
                   }`}
-                  onClick={() => {
-                    setActiveInterview(interview.id)
-                    router.push('/')
-                  }}
+                  onClick={() => setActiveInterview(interview.id)}
                 >
-                  {/* Top row: name + visibility badge */}
-                  <div className="flex items-start justify-between gap-2">
-                    {isEditing ? (
-                      <input
-                        value={editName}
-                        onChange={(event) => setEditName(event.target.value)}
-                        onBlur={() => {
-                          renameInterview(interview.id, editName)
-                          setEditingId(null)
-                        }}
-                        onKeyDown={(event) => {
-                          if (event.key === 'Enter') {
+                  {/* Main row: all info in a horizontal layout */}
+                  <div className="flex items-center gap-4 px-5 py-4">
+                    {/* Active indicator */}
+                    <div className={`shrink-0 size-2.5 rounded-full ${isActive ? 'bg-electric-blue' : 'bg-transparent'}`} />
+
+                    {/* Name */}
+                    <div className="min-w-0 flex-1">
+                      {isEditing ? (
+                        <input
+                          value={editName}
+                          onChange={(event) => setEditName(event.target.value)}
+                          onBlur={() => {
                             renameInterview(interview.id, editName)
                             setEditingId(null)
-                          }
-                        }}
-                        className="min-w-0 flex-1 border-b-2 border-electric-blue bg-transparent font-[family-name:var(--font-sora)] text-lg font-semibold text-ink outline-none"
-                        autoFocus
-                        onClick={(event) => event.stopPropagation()}
-                      />
-                    ) : (
-                      <h3 className="line-clamp-1 font-[family-name:var(--font-sora)] text-lg font-semibold text-ink">
-                        {interview.name}
-                      </h3>
-                    )}
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                              renameInterview(interview.id, editName)
+                              setEditingId(null)
+                            }
+                          }}
+                          className="w-full border-b-2 border-electric-blue bg-transparent font-[family-name:var(--font-sora)] text-base font-semibold text-ink outline-none"
+                          autoFocus
+                          onClick={(event) => event.stopPropagation()}
+                        />
+                      ) : (
+                        <h3 className="truncate font-[family-name:var(--font-sora)] text-base font-semibold text-ink">
+                          {interview.name}
+                        </h3>
+                      )}
+                    </div>
 
+                    {/* Date */}
+                    <div className="hidden shrink-0 items-center gap-1.5 text-sm text-ink sm:flex">
+                      <Calendar className="size-3.5 text-text-muted" />
+                      <span>{formatDateTime(interview.scheduledAt)}</span>
+                    </div>
+
+                    {/* Segment */}
+                    <span className="hidden shrink-0 text-sm text-text-muted md:block">
+                      {interview.config.coreFacts.segment
+                        ? segmentLabel(interview.config.coreFacts.segment)
+                        : '-'}
+                    </span>
+
+                    {/* Status dot + label */}
+                    <div className="hidden shrink-0 items-center gap-1.5 text-sm text-text-muted sm:flex">
+                      <span className={`inline-block size-2 rounded-full ${STATUS_DOT_COLOR[interview.status]}`} />
+                      <span>{statusLabel(interview.status)}</span>
+                    </div>
+
+                    {/* Pain points */}
+                    <span className="hidden shrink-0 text-sm text-text-muted lg:block">
+                      {painPointsCount} Schmerzp.
+                    </span>
+
+                    {/* Visibility badge */}
                     <button
                       type="button"
                       onClick={(event) => {
@@ -178,67 +191,41 @@ export default function InterviewsPage() {
                       ) : (
                         <Lock className="size-3" />
                       )}
-                      {interview.visibility === 'public' ? 'Öffentlich' : 'Privat'}
+                      <span className="hidden sm:inline">
+                        {interview.visibility === 'public' ? 'Öffentlich' : 'Privat'}
+                      </span>
                     </button>
                   </div>
 
-                  {/* Scheduled date display */}
-                  <div className="mt-2 flex items-center gap-1.5 text-sm text-ink">
-                    <Calendar className="size-3.5 text-text-muted" />
-                    <span>{formatDateTime(interview.scheduledAt)}</span>
-                  </div>
-
-                  {/* Meta info */}
-                  <div className="mt-2 space-y-0.5">
-                    <p className="text-sm text-text-muted">
-                      Segment:{' '}
-                      {interview.config.coreFacts.segment
-                        ? segmentLabel(interview.config.coreFacts.segment)
-                        : '-'}
-                    </p>
-                    <div className="flex items-center gap-2 text-sm text-text-muted">
-                      <span className="inline-flex items-center gap-1.5">
-                        <span
-                          className={`inline-block size-2 rounded-full ${STATUS_DOT_COLOR[interview.status]}`}
-                        />
-                        {statusLabel(interview.status)}
-                      </span>
-                      <span className="text-text-muted/40">·</span>
-                      <span>{painPointsCount} Schmerzp.</span>
+                  {/* Actions row */}
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-cloud-dancer px-5 py-2.5">
+                    {/* Date picker */}
+                    <div className="relative" onClick={(e) => e.stopPropagation()}>
+                      <Calendar className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-text-muted" />
+                      <input
+                        type="datetime-local"
+                        value={isoToDatetimeLocal(interview.scheduledAt)}
+                        onChange={(event) => {
+                          const val = event.target.value
+                          if (val) {
+                            updateScheduledAt(interview.id, new Date(val).toISOString())
+                          }
+                        }}
+                        className="h-8 w-[180px] rounded-lg border border-cloud-dancer bg-white pl-8 pr-2 text-xs text-ink focus:border-electric-blue focus:outline-none"
+                      />
                     </div>
-                  </div>
 
-                  {/* Actions area */}
-                  <div className="mt-4 space-y-3 border-t border-cloud-dancer pt-4">
-                    {/* Date picker + status select row */}
-                    <div className="flex gap-2">
-                      <div className="relative flex-1" onClick={(e) => e.stopPropagation()}>
-                        <Calendar className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-text-muted" />
-                        <input
-                          type="datetime-local"
-                          value={isoToDatetimeLocal(interview.scheduledAt)}
-                          onChange={(event) => {
-                            const val = event.target.value
-                            if (val) {
-                              updateScheduledAt(interview.id, new Date(val).toISOString())
-                            }
-                          }}
-                          className="h-9 w-full rounded-lg border border-cloud-dancer bg-white pl-8 pr-2 text-xs text-ink focus:border-electric-blue focus:outline-none"
-                        />
-                      </div>
+                    {/* Status select */}
+                    <div onClick={(e) => e.stopPropagation()}>
                       <Select
                         value={interview.status}
-                        onClick={(event) => event.stopPropagation()}
                         onChange={(event) => {
-                          event.stopPropagation()
                           setActiveInterview(interview.id)
                           useInterviewStore
                             .getState()
-                            .updateStatus(
-                              event.target.value as InterviewStatus,
-                            )
+                            .updateStatus(event.target.value as InterviewStatus)
                         }}
-                        className="!h-9 !w-auto min-w-[120px] !rounded-lg !border-cloud-dancer !bg-white !text-xs !text-ink focus:!border-electric-blue"
+                        className="!h-8 !w-auto !min-w-[110px] !rounded-lg !border-cloud-dancer !bg-white !text-xs !text-ink focus:!border-electric-blue"
                       >
                         <option value="geplant">Geplant</option>
                         <option value="in_durchfuehrung">In Durchf.</option>
@@ -247,53 +234,46 @@ export default function InterviewsPage() {
                       </Select>
                     </div>
 
-                    {/* Action buttons row */}
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={(event) => {
-                          event.stopPropagation()
-                          setEditingId(interview.id)
-                          setEditName(interview.name)
-                        }}
-                        className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-electric-blue transition-colors"
-                      >
-                        <Pencil className="size-3.5" />
-                        Umbenennen
-                      </button>
+                    <div className="mx-1 hidden h-4 w-px bg-cloud-dancer sm:block" />
 
-                      <button
-                        type="button"
-                        onClick={(event) => {
-                          event.stopPropagation()
-                          duplicateInterview(interview.id)
-                        }}
-                        className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-electric-blue transition-colors"
-                      >
-                        <Copy className="size-3.5" />
-                        Duplizieren
-                      </button>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        setEditingId(interview.id)
+                        setEditName(interview.name)
+                      }}
+                      className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-electric-blue transition-colors"
+                    >
+                      <Pencil className="size-3.5" />
+                      Umbenennen
+                    </button>
 
-                      <button
-                        type="button"
-                        onClick={(event) => {
-                          event.stopPropagation()
-                          if (confirm(`Interview „${interview.name}" löschen?`)) {
-                            deleteInterview(interview.id)
-                          }
-                        }}
-                        className="ml-auto inline-flex items-center gap-1 text-xs text-text-muted hover:text-[#c0392b] transition-colors"
-                      >
-                        <Trash2 className="size-3.5" />
-                        Löschen
-                      </button>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        duplicateInterview(interview.id)
+                      }}
+                      className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-electric-blue transition-colors"
+                    >
+                      <Copy className="size-3.5" />
+                      Duplizieren
+                    </button>
 
-                      {isActive && (
-                        <span className="rounded-full bg-electric-blue/10 px-2.5 py-0.5 text-xs font-semibold text-electric-blue">
-                          Aktiv
-                        </span>
-                      )}
-                    </div>
+                    <button
+                      type="button"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        if (confirm(`Interview „${interview.name}" löschen?`)) {
+                          deleteInterview(interview.id)
+                        }
+                      }}
+                      className="inline-flex items-center gap-1 text-xs text-text-muted hover:text-[#c0392b] transition-colors"
+                    >
+                      <Trash2 className="size-3.5" />
+                      Löschen
+                    </button>
                   </div>
                 </div>
               )

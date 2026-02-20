@@ -16,10 +16,9 @@ import type { InterviewSectionKey } from '@/types'
 
 interface SectionStepBaseProps {
   sectionKey: InterviewSectionKey
-  onMarkComplete?: () => void
 }
 
-export function SectionStepBase({ sectionKey, onMarkComplete }: SectionStepBaseProps) {
+export function SectionStepBase({ sectionKey }: SectionStepBaseProps) {
   const interview = useInterviewStore((state) => state.getActiveInterview())
   const updateSectionNote = useInterviewStore((state) => state.updateSectionNote)
   const addQuote = useInterviewStore((state) => state.addQuote)
@@ -168,12 +167,6 @@ export function SectionStepBase({ sectionKey, onMarkComplete }: SectionStepBaseP
           ))}
         </ul>
       </div>
-
-      {onMarkComplete && (
-        <Button variant="outline" onClick={onMarkComplete} className="w-full">
-          Abschnitt abgeschlossen
-        </Button>
-      )}
 
       <Dialog
         open={quoteDialogOpen}

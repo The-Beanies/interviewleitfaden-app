@@ -24,7 +24,7 @@ export const WIZARD_STEP_LABELS = [
   'Gründungsreise',
   'Schmerz & Umgehungslösungen',
   'KI & Automatisierung',
-  'STEVE-Test',
+  'bean:up-Test',
   'Abschluss',
   'Zusammenfassung',
   'Bewertung',
@@ -58,13 +58,13 @@ export const PAGE_NAMES = [
   'Schmerzpunkte',
   'Umgehungslösungen',
   'KI-Haltung',
-  'STEVE-Reaktion',
+  'bean:up-Reaktion',
   'Schlüsselzitate',
   'Bewertung',
 ] as const
 
-export const STEVE_PITCH_TEXT =
-  'Stell dir vor, du hättest einen KI-gestützten Co-Piloten für deine Gründung — wir nennen ihn STEVE. STEVE begleitet dich von der ersten Idee bis zum fertigen Businessplan. Er hilft dir, deinen Markt zu verstehen, dein Geschäftsmodell zu validieren, und erstellt dir bankfertige Unterlagen — alles in einem Tool, für einen Bruchteil der Kosten einer klassischen Beratung. Du sagst STEVE, was du vorhast, und er führt dich Schritt für Schritt durch den Prozess.'
+export const BEANUP_PITCH_TEXT =
+  'Stell dir vor, du hättest einen KI-gestützten Co-Piloten für deine Gründung — wir nennen ihn bean:up. bean:up begleitet dich von der ersten Idee bis zum fertigen Businessplan. Er hilft dir, deinen Markt zu verstehen, dein Geschäftsmodell zu validieren, und erstellt dir bankfertige Unterlagen — alles in einem Tool, für einen Bruchteil der Kosten einer klassischen Beratung. Du sagst bean:up, was du vorhast, und er führt dich Schritt für Schritt durch den Prozess.'
 
 const QUESTION_SETS: Record<InterviewSectionKey, InterviewQuestion[]> = {
   warmup: [
@@ -176,7 +176,7 @@ const QUESTION_SETS: Record<InterviewSectionKey, InterviewQuestion[]> = {
   konzepttest_steve: [
     {
       id: 'steve-1',
-      text: 'Was ist deine erste Reaktion auf das STEVE-Konzept?',
+      text: 'Was ist deine erste Reaktion auf das bean:up-Konzept?',
       segment: 'both',
       isFollowUp: false,
       category: 'reaction',
@@ -272,9 +272,9 @@ export const INTERVIEW_SECTIONS: InterviewSectionConfig[] = [
   },
   {
     key: 'konzepttest_steve',
-    label: '5. Konzepttest STEVE',
+    label: '5. Konzepttest bean:up',
     durationMinutes: 10,
-    description: 'STEVE-Pitch testen, Reaktion und Zahlungsbereitschaft dokumentieren.',
+    description: 'bean:up-Pitch testen, Reaktion und Zahlungsbereitschaft dokumentieren.',
     questions: QUESTION_SETS.konzepttest_steve,
     donts: [
       'Nicht verteidigen oder argumentieren, wenn Kritik kommt.',
@@ -300,7 +300,7 @@ export const DEFAULT_CHECKLIST_LABELS = [
   'Einwilligung für Notizen/Zitate vorbereitet',
   'Interviewleitfaden und Fragen geprüft',
   'Timer und Durchführungsmodus bereit',
-  'STEVE-Pitch final abgestimmt',
+  'bean:up-Pitch final abgestimmt',
   'Post-Interview-Zusammenfassung direkt im Anschluss eingeplant',
 ]
 

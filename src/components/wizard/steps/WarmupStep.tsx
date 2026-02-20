@@ -3,6 +3,6 @@
 import { SectionStepBase } from './SectionStepBase'
 import type { WizardStepProps } from './types'
 
-export function WarmupStep({ onNext }: WizardStepProps) {
-  return <SectionStepBase sectionKey="warmup" onMarkComplete={onNext} />
+export function WarmupStep(_props: WizardStepProps) {
+  return <SectionStepBase sectionKey="warmup" />
 }

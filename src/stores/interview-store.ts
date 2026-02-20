@@ -44,6 +44,8 @@ interface InterviewStore {
   addQuote: (quote: Omit<Quote, 'id' | 'createdAt'>) => void
   removeQuote: (quoteId: string) => void
   updateChecklist: (itemId: string, checked: boolean) => void
+  addChecklistItem: (label: string) => void
+  removeChecklistItem: (id: string) => void
   updateTimerState: (payload: Partial<TimerState>) => void
   updateSummary: (payload: Partial<PostInterviewSummary>) => void
   updateJTBD: (payload: Partial<JTBDAnalysis>) => void
@@ -485,6 +487,31 @@ export const useInterviewStore = create<InterviewStore>()(
               checklist: interview.config.checklist.map((item) =>
                 item.id === itemId ? { ...item, checked } : item,
               ),
+            },
+          })),
+        }))
+      },
+      addChecklistItem: (label) => {
+        set((state) => ({
+          interviews: withUpdatedInterview(state, (interview) => ({
+            ...interview,
+            config: {
+              ...interview.config,
+              checklist: [
+                ...interview.config.checklist,
+                { id: createId('checklist'), label, checked: false },
+              ],
+            },
+          })),
+        }))
+      },
+      removeChecklistItem: (id) => {
+        set((state) => ({
+          interviews: withUpdatedInterview(state, (interview) => ({
+            ...interview,
+            config: {
+              ...interview.config,
+              checklist: interview.config.checklist.filter((item) => item.id !== id),
             },
           })),
         }))

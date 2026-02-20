@@ -2,14 +2,12 @@
 
 import { useMemo } from 'react'
 
-import { AISuggestButton } from '@/components/wizard/AISuggestButton'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { createId } from '@/lib/utils'
-import { mockAIService } from '@/services/ai-mock'
 import { useInterviewStore } from '@/stores/interview-store'
 
 import type { WizardStepProps } from './types'
@@ -40,26 +38,16 @@ export function SummaryStep({ interview }: WizardStepProps) {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h2 className="type-h4 text-carbon-black">Zusammenfassung</h2>
-          <p className="type-body text-carbon-black/60">Strukturierte Verdichtung nach dem Interview.</p>
-        </div>
-        <AISuggestButton
-          label="KI-Zusammenfassung generieren"
-          onSuggest={() =>
-            mockAIService.generateSummary({
-              coreFacts: interview.config.coreFacts,
-              sectionNotes: interview.config.sectionNotes,
-              allQuotes: interview.config.allQuotes,
-            })
-          }
-          onApply={(payload) => updateSummary(payload)}
-        />
+      <div>
+        <h2 className="type-h4 text-carbon-black">Zusammenfassung</h2>
+        <p className="type-body text-carbon-black/60">
+          Fuelle die Felder basierend auf deinen Notizen aus den vorherigen Abschnitten aus. Jedes Feld hilft dir, die wichtigsten Erkenntnisse strukturiert festzuhalten.
+        </p>
       </div>
 
       <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
         <Label>JTBD-Auslöser</Label>
+        <p className="text-xs text-carbon-black/50">Was hat den Gruender dazu bewogen, aktiv nach einer Loesung zu suchen?</p>
         <Textarea
           rows={3}
           value={summary.jtbd.trigger}
@@ -248,7 +236,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
       </div>
 
       <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
-        <Label>STEVE - Erste Reaktion</Label>
+        <Label>bean:up - Erste Reaktion</Label>
         <Textarea
           rows={3}
           value={summary.steveReaction.firstReaction}

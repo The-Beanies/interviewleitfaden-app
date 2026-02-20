@@ -14,7 +14,7 @@ export function sectionLabel(sectionKey: InterviewSectionKey): string {
       gruendungsreise: 'Gründungsreise',
       schmerz_workarounds: 'Schmerz & Umgehungslösungen',
       ki_automatisierung: 'KI & Automatisierung',
-      konzepttest_steve: 'Konzepttest STEVE',
+      konzepttest_steve: 'Konzepttest bean:up',
       abschluss: 'Abschluss',
     }[sectionKey] ?? sectionKey
   )

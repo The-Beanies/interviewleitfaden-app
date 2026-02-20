@@ -3,6 +3,6 @@
 import { SectionStepBase } from './SectionStepBase'
 import type { WizardStepProps } from './types'
 
-export function AbschlussStep({ onNext }: WizardStepProps) {
-  return <SectionStepBase sectionKey="abschluss" onMarkComplete={onNext} />
+export function AbschlussStep(_props: WizardStepProps) {
+  return <SectionStepBase sectionKey="abschluss" />
 }

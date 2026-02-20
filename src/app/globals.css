@@ -1,28 +1,30 @@
 @import 'tailwindcss';
 
 @theme inline {
-  --color-studio-white: #fafafa;
-  --color-carbon-black: #262626;
-  --color-terrazzo-grey: #e0e2e4;
-  --color-nordic-oak: #e6c8a6;
-  --color-botanical-green: #6d8b6e;
-  --color-botanical-green-text: #5a7a5b;
+  /* Brand book core palette */
+  --color-studio-white: #FFFFFF;
+  --color-carbon-black: #111110;
+  --color-terrazzo-grey: #F0EEE9;
+  --color-nordic-oak: #6B8EF0;
+  --color-botanical-green: #0000FF;
+  --color-botanical-green-text: #0000CC;
 
-  --color-success: #6d8b6e;
-  --color-warning: #f5a623;
-  --color-error: #d94b4b;
-  --color-info: #4a90d9;
+  --color-success: #1a7a4a;
+  --color-warning: #c47d0e;
+  --color-error: #c0392b;
+  --color-info: #4D6FFF;
 
   --font-heading: var(--font-manrope);
   --font-body: var(--font-inter);
 
-  --shadow-level1: 0 2px 8px rgba(38, 38, 38, 0.05);
-  --shadow-level2: 0 8px 24px rgba(38, 38, 38, 0.12);
+  --shadow-level1: 0 2px 8px rgba(17, 17, 16, 0.05);
+  --shadow-level2: 0 8px 24px rgba(17, 17, 16, 0.12);
 
   --radius-button: 8px;
   --radius-card: 12px;
   --radius-card-lg: 16px;
 
+  /* Brand book named tokens (aliases) */
   --color-electric-blue: #0000FF;
   --color-ink: #111110;
   --color-cloud-dancer: #F0EEE9;
@@ -30,16 +32,17 @@
   --color-text-muted: #5c5850;
   --font-display: var(--font-sora);
 
-  --color-background: #fafafa;
-  --color-foreground: #262626;
-  --color-primary: #6d8b6e;
-  --color-primary-foreground: #fafafa;
-  --color-muted: #e0e2e4;
-  --color-muted-foreground: #262626;
-  --color-border: #e0e2e4;
-  --color-input: #e0e2e4;
-  --color-ring: #6d8b6e;
-  --color-destructive: #d94b4b;
+  /* Semantic tokens */
+  --color-background: #FFFFFF;
+  --color-foreground: #111110;
+  --color-primary: #0000FF;
+  --color-primary-foreground: #FFFFFF;
+  --color-muted: #F0EEE9;
+  --color-muted-foreground: #111110;
+  --color-border: #F0EEE9;
+  --color-input: #F0EEE9;
+  --color-ring: #0000FF;
+  --color-destructive: #c0392b;
 }
 
 :root {
@@ -53,8 +56,8 @@ html {
 }
 
 body {
-  background: #fafafa;
-  color: #262626;
+  background: #FFFFFF;
+  color: #111110;
   font-family: var(--font-body);
   overflow-x: hidden;
 }
@@ -151,7 +154,7 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid #6d8b6e;
+  outline: 2px solid #0000FF;
   outline-offset: 2px;
 }
 

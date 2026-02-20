@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-import { Copy, Pencil, Plus, Trash2 } from 'lucide-react'
+import { Copy, Globe, Lock, Pencil, Plus, Trash2 } from 'lucide-react'
 import { Header } from '@/components/layout/Header'
 import { Select } from '@/components/ui/select'
 import { useHydrated } from '@/lib/use-hydrated'
@@ -22,6 +22,7 @@ export default function InterviewsPage() {
   const duplicateInterview = useInterviewStore((state) => state.duplicateInterview)
   const deleteInterview = useInterviewStore((state) => state.deleteInterview)
   const renameInterview = useInterviewStore((state) => state.renameInterview)
+  const updateVisibility = useInterviewStore((state) => state.updateVisibility)
 
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editName, setEditName] = useState('')
@@ -117,6 +118,30 @@ export default function InterviewsPage() {
                   Status: {statusLabel(interview.status)} · Schmerzpunkte: {painPointsCount}
                 </p>
                 <p className="mt-1 type-caption text-carbon-black/40">Aktualisiert: {formatDate(interview.updatedAt)}</p>
+
+                <div className="mt-2 flex items-center gap-2">
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold ${
+                    interview.visibility === 'public'
+                      ? 'bg-botanical-green/10 text-botanical-green'
+                      : 'bg-terrazzo-grey/50 text-carbon-black/50'
+                  }`}>
+                    {interview.visibility === 'public' ? <Globe className="size-3" /> : <Lock className="size-3" />}
+                    {interview.visibility === 'public' ? 'Öffentlich' : 'Privat'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={(event) => {
+                      event.stopPropagation()
+                      updateVisibility(
+                        interview.id,
+                        interview.visibility === 'public' ? 'private' : 'public',
+                      )
+                    }}
+                    className="text-[11px] text-carbon-black/40 hover:text-botanical-green"
+                  >
+                    {interview.visibility === 'public' ? 'Auf privat setzen' : 'Öffentlich machen'}
+                  </button>
+                </div>
 
                 <div className="mt-3 space-y-2 border-t border-terrazzo-grey pt-3">
                   <Select

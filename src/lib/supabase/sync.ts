@@ -1,4 +1,4 @@
-import type { Interview } from '@/types'
+import type { Interview, InterviewVisibility } from '@/types'
 import type { Database, Json } from '@/types/database'
 import { useSyncStore } from '@/stores/sync-store'
 import { createClient } from './client'
@@ -13,6 +13,7 @@ function rowToInterview(row: InterviewRow): Interview {
     name: row.name,
     config,
     status: row.status as Interview['status'],
+    visibility: (row.visibility as InterviewVisibility) ?? 'private',
     scheduledAt: row.scheduled_at,
     conductedAt: row.conducted_at ?? '',
     createdAt: row.created_at,
@@ -30,6 +31,7 @@ function interviewToRow(
     name: interview.name,
     config: interview.config as unknown as Json,
     status: interview.status,
+    visibility: interview.visibility ?? 'private',
     scheduled_at: interview.scheduledAt,
     conducted_at: interview.conductedAt || null,
     created_at: interview.createdAt,

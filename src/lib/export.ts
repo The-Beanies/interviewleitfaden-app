@@ -279,9 +279,9 @@ export function downloadInsightsReport(summary: InsightsSummary) {
 - Gesamtinterviews: ${summary.totalInterviews}
 - Segment retrospektiv: ${summary.segmentBreakdown.retrospektiv}
 - Segment aktuell gründend: ${summary.segmentBreakdown.aktuell_gruendend}
-- Durchschnittlicher STEVE-Fit: ${summary.avgSteveFit.toFixed(2)}/5
+- Durchschnittlicher bean:up-Fit: ${summary.avgSteveFit.toFixed(2)}/5
 
-## STEVE-Interesse
+## bean:up-Interesse
 
 - Stark: ${summary.steveInterestDistribution.stark}
 - Höflich: ${summary.steveInterestDistribution.hoeflich}

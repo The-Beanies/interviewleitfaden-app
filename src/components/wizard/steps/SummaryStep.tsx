@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -65,6 +65,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
       <div className="grid gap-3 md:grid-cols-2">
         <ListField
           label="Push-Faktoren"
+          helperText="Was treibt den Gruender weg von der aktuellen Situation?"
           value={listToText(summary.jtbd.pushFactors)}
           onChange={(value) =>
             updateSummary({
@@ -77,6 +78,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
         />
         <ListField
           label="Pull-Faktoren"
+          helperText="Was zieht den Gruender hin zu einer neuen Loesung?"
           value={listToText(summary.jtbd.pullFactors)}
           onChange={(value) =>
             updateSummary({
@@ -89,6 +91,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
         />
         <ListField
           label="Ängste"
+          helperText="Welche Befuerchtungen hat der Gruender bzgl. einer Veraenderung?"
           value={listToText(summary.jtbd.anxiety)}
           onChange={(value) =>
             updateSummary({
@@ -101,6 +104,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
         />
         <ListField
           label="Gewohnheiten"
+          helperText="Welche bestehenden Gewohnheiten verhindern die Veraenderung?"
           value={listToText(summary.jtbd.habit)}
           onChange={(value) =>
             updateSummary({
@@ -194,17 +198,20 @@ export function SummaryStep({ interview }: WizardStepProps) {
       <div className="grid gap-3 md:grid-cols-2">
         <ListField
           label="Umgehungslösungen"
+          helperText="Welche Workarounds nutzt der Gruender aktuell?"
           value={listToText(summary.workaroundsAttempted)}
           onChange={(value) => updateSummary({ workaroundsAttempted: textToList(value) })}
         />
         <div className="space-y-3">
           <ListField
             label="KI-Tools"
+            helperText="Welche KI-Tools werden bereits genutzt?"
             value={listToText(summary.aiToolsUsed)}
             onChange={(value) => updateSummary({ aiToolsUsed: textToList(value) })}
           />
           <ListField
             label="KI-Barrieren"
+            helperText="Was haelt den Gruender davon ab, mehr KI einzusetzen?"
             value={listToText(summary.aiBarriers)}
             onChange={(value) => updateSummary({ aiBarriers: textToList(value) })}
           />
@@ -213,6 +220,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
 
       <div className="rounded-card border border-terrazzo-grey p-4">
         <Label>KI-Haltung</Label>
+        <p className="text-xs text-carbon-black/50">Grundsaetzliche Einstellung gegenueber KI-Technologie.</p>
         <Select
           className="mt-2"
           value={summary.aiAttitude}
@@ -237,6 +245,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
 
       <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
         <Label>bean:up - Erste Reaktion</Label>
+        <p className="text-xs text-carbon-black/50">Spontane Worte und Koerpersprache bei Vorstellung von bean:up.</p>
         <Textarea
           rows={3}
           value={summary.steveReaction.firstReaction}
@@ -251,33 +260,72 @@ export function SummaryStep({ interview }: WizardStepProps) {
         />
       </div>
 
-      <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
-        <Label>Wichtigste Zitate (eine Zeile je Zitat)</Label>
-        <Textarea
-          rows={4}
-          value={summary.keyQuotes.map((quote) => quote.text).join('\n')}
-          onChange={(event) =>
-            updateSummary({
-              keyQuotes: textToList(event.target.value).map((text) => ({
-                id: createId('quote'),
-                text,
-                sectionKey: 'abschluss',
-                isVerbatim: true,
-                createdAt: new Date().toISOString(),
-              })),
-            })
-          }
-        />
-      </div>
+      <QuotesField
+        value={summary.keyQuotes.map((quote) => quote.text).join('\n')}
+        onChange={(raw) =>
+          updateSummary({
+            keyQuotes: textToList(raw).map((text) => ({
+              id: createId('quote'),
+              text,
+              sectionKey: 'abschluss',
+              isVerbatim: true,
+              createdAt: new Date().toISOString(),
+            })),
+          })
+        }
+      />
     </div>
   )
 }
 
-function ListField({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+function ListField({
+  label,
+  helperText,
+  value,
+  onChange,
+}: {
+  label: string
+  helperText?: string
+  value: string
+  onChange: (value: string) => void
+}) {
+  const [local, setLocal] = useState(value)
+
+  useEffect(() => {
+    setLocal(value)
+  }, [value])
+
   return (
     <div className="space-y-2 rounded-card border border-terrazzo-grey p-3">
       <Label>{label}</Label>
-      <Textarea rows={4} value={value} onChange={(event) => onChange(event.target.value)} />
+      {helperText && <p className="text-xs text-carbon-black/50">{helperText}</p>}
+      <Textarea
+        rows={4}
+        value={local}
+        onChange={(event) => setLocal(event.target.value)}
+        onBlur={() => onChange(local)}
+      />
+    </div>
+  )
+}
+
+function QuotesField({ value, onChange }: { value: string; onChange: (raw: string) => void }) {
+  const [local, setLocal] = useState(value)
+
+  useEffect(() => {
+    setLocal(value)
+  }, [value])
+
+  return (
+    <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
+      <Label>Wichtigste Zitate (eine Zeile je Zitat)</Label>
+      <p className="text-xs text-carbon-black/50">Die praegnantesten woertlichen Zitate. Eine Zeile pro Zitat.</p>
+      <Textarea
+        rows={4}
+        value={local}
+        onChange={(event) => setLocal(event.target.value)}
+        onBlur={() => onChange(local)}
+      />
     </div>
   )
 }

@@ -20,6 +20,7 @@ import type {
   InterviewQuestion,
   InterviewSectionKey,
   InterviewStatus,
+  InterviewVisibility,
   JTBDAnalysis,
   OverallAssessment,
   PainPoint,
@@ -37,7 +38,7 @@ interface InterviewStore {
   deleteInterview: (id: string) => void
   renameInterview: (id: string, name: string) => void
   setActiveInterview: (id: string) => void
-  getActiveInterview: () => Interview
+  getActiveInterview: () => Interview | null
   updateStatus: (status: InterviewStatus) => void
   updateCoreFacts: (payload: Partial<CoreFacts>) => void
   updateSectionNote: (sectionKey: InterviewSectionKey, content: string) => void
@@ -59,6 +60,7 @@ interface InterviewStore {
   addFounder: () => void
   updateFounder: (id: string, payload: Partial<AdditionalFounder>) => void
   removeFounder: (id: string) => void
+  updateVisibility: (id: string, visibility: InterviewVisibility) => void
   addCustomQuestion: (sectionKey: InterviewSectionKey, text: string) => void
   removeCustomQuestion: (sectionKey: InterviewSectionKey, questionId: string) => void
 }
@@ -199,7 +201,7 @@ function mergeConfigWithDefaults(config: unknown): InterviewConfig {
     checklist: Array.isArray(incoming.checklist)
       ? incoming.checklist.map((item) => ({
           id: typeof item.id === 'string' && item.id ? item.id : createId('checklist'),
-          label: typeof item.label === 'string' ? item.label : '',
+          label: typeof item.label === 'string' ? item.label.replace(/STEVE/g, 'bean:up') : '',
           checked: Boolean(item.checked),
         }))
       : defaults.checklist,
@@ -235,6 +237,10 @@ function normalizeInterview(interview: unknown): Interview | null {
       incoming.status === 'abgebrochen'
         ? incoming.status
         : fallback.status,
+    visibility:
+      incoming.visibility === 'private' || incoming.visibility === 'public'
+        ? incoming.visibility
+        : 'private',
     config: mergeConfigWithDefaults(incoming.config),
   }
 }
@@ -250,7 +256,7 @@ function normalizePersistedState(
     .filter((interview): interview is Interview => interview !== null)
 
   if (!interviews.length) {
-    return fallbackState
+    return { interviews: [], activeInterviewId: '' }
   }
 
   const activeInterviewId =
@@ -265,13 +271,11 @@ function normalizePersistedState(
   }
 }
 
-const initialInterview = createDefaultInterview('Erstes Discovery Interview')
-
 export const useInterviewStore = create<InterviewStore>()(
   persist(
     (set, get) => ({
-      interviews: [initialInterview],
-      activeInterviewId: initialInterview.id,
+      interviews: [],
+      activeInterviewId: '',
       createInterview: (name = 'Unbenanntes Interview') => {
         const interview = createDefaultInterview(name)
         set((state) => ({
@@ -303,19 +307,11 @@ export const useInterviewStore = create<InterviewStore>()(
       deleteInterview: (id) => {
         set((state) => {
           const interviews = state.interviews.filter((interview) => interview.id !== id)
-          if (!interviews.length) {
-            const fallback = createDefaultInterview('Erstes Discovery Interview')
-            return {
-              interviews: [fallback],
-              activeInterviewId: fallback.id,
-            }
-          }
-
-          const hasActive = interviews.some((interview) => interview.id === state.activeInterviewId)
+          const hasActive = interviews.length > 0 && interviews.some((interview) => interview.id === state.activeInterviewId)
 
           return {
             interviews,
-            activeInterviewId: hasActive ? state.activeInterviewId : interviews[0].id,
+            activeInterviewId: hasActive ? state.activeInterviewId : (interviews[0]?.id ?? ''),
           }
         })
         useWizardStore.getState().removeInterview(id)
@@ -341,7 +337,7 @@ export const useInterviewStore = create<InterviewStore>()(
         return (
           state.interviews.find((interview) => interview.id === state.activeInterviewId) ??
           state.interviews[0] ??
-          createDefaultInterview('Erstes Discovery Interview')
+          null
         )
       },
       updateStatus: (status) => {
@@ -800,6 +796,15 @@ export const useInterviewStore = create<InterviewStore>()(
           }),
         }))
       },
+      updateVisibility: (id, visibility) => {
+        set((state) => ({
+          interviews: state.interviews.map((interview) =>
+            interview.id === id
+              ? { ...interview, visibility, updatedAt: new Date().toISOString() }
+              : interview,
+          ),
+        }))
+      },
       addCustomQuestion: (sectionKey, text) => {
         set((state) => ({
           interviews: withUpdatedInterview(state, (interview) => {
@@ -861,8 +866,8 @@ export const useInterviewStore = create<InterviewStore>()(
   ),
 )
 
-export function getActiveInterviewConfig() {
-  return useInterviewStore.getState().getActiveInterview().config
+export function getActiveInterviewConfig(): InterviewConfig | null {
+  return useInterviewStore.getState().getActiveInterview()?.config ?? null
 }
 
 // --- Supabase Sync ---
@@ -883,12 +888,10 @@ export async function initialSync(userId: string) {
       activeInterviewId: activeStillExists ? currentActiveId : remote[0].id,
     })
   } else {
-    const fresh = createDefaultInterview('Erstes Discovery Interview')
     useInterviewStore.setState({
-      interviews: [fresh],
-      activeInterviewId: fresh.id,
+      interviews: [],
+      activeInterviewId: '',
     })
-    await upsertInterview(fresh, userId)
   }
 }
 

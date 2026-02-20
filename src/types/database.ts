@@ -16,6 +16,7 @@ export type Database = {
           name: string
           config: Json
           status: string
+          visibility: string
           scheduled_at: string
           conducted_at: string | null
           created_at: string
@@ -27,6 +28,7 @@ export type Database = {
           name?: string
           config?: Json
           status?: string
+          visibility?: string
           scheduled_at?: string
           conducted_at?: string | null
           created_at?: string
@@ -38,6 +40,7 @@ export type Database = {
           name?: string
           config?: Json
           status?: string
+          visibility?: string
           scheduled_at?: string
           conducted_at?: string | null
           created_at?: string

@@ -10,7 +10,7 @@ export function AssessmentSection({ assessment }: { assessment: OverallAssessmen
       <div className="grid gap-3 md:grid-cols-3">
         <ScoreIndicator label="Relevanz" value={assessment.relevanceScore} />
         <ScoreIndicator label="Schmerzintensität" value={assessment.painIntensityScore} />
-        <ScoreIndicator label="STEVE-Fit" value={assessment.steveFitScore} />
+        <ScoreIndicator label="bean:up-Fit" value={assessment.steveFitScore} />
       </div>
       <p className="type-body">
         <strong>Nachfass-Priorität:</strong> {followUpPriorityLabel(assessment.followUpPriority)}

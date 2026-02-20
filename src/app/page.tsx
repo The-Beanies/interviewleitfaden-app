@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { Header } from '@/components/layout/Header'
 import ScrollToTop from '@/components/navigation/ScrollToTop'
@@ -13,8 +14,15 @@ export default function EditorPage() {
   const hydrated = useHydrated()
   const interview = useInterviewStore((state) => state.getActiveInterview())
   const [mobileView, setMobileView] = useState<'edit' | 'preview'>('edit')
+  const router = useRouter()
 
-  if (!hydrated) return null
+  useEffect(() => {
+    if (hydrated && !interview) {
+      router.replace('/interviews')
+    }
+  }, [hydrated, interview, router])
+
+  if (!hydrated || !interview) return null
 
   return (
     <>
@@ -45,7 +53,7 @@ export default function EditorPage() {
         </button>
       </div>
 
-      <main id="main-content" className="flex min-h-[calc(100vh-4rem)]">
+      <main id="main-content" className="flex h-[calc(100vh-4rem)] overflow-hidden">
         <div
           className={`w-full overflow-y-auto border-terrazzo-grey p-4 lg:w-1/2 lg:border-r lg:p-6 xl:w-[45%] ${
             mobileView === 'edit' ? 'block' : 'hidden lg:block'

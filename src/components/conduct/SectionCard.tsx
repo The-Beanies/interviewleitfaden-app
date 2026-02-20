@@ -12,7 +12,7 @@ import { QuestionList } from './QuestionList'
 import { QuoteList } from './QuoteList'
 
 export function SectionCard({ sectionKey }: { sectionKey: InterviewSectionKey }) {
-  const interview = useInterviewStore((state) => state.getActiveInterview())
+  const interview = useInterviewStore((state) => state.getActiveInterview())!
   const updateSectionNote = useInterviewStore((state) => state.updateSectionNote)
   const addCustomQuestion = useInterviewStore((state) => state.addCustomQuestion)
   const removeCustomQuestion = useInterviewStore((state) => state.removeCustomQuestion)
@@ -42,7 +42,7 @@ export function SectionCard({ sectionKey }: { sectionKey: InterviewSectionKey })
   }
 
   return (
-    <div className="space-y-4 rounded-card border border-terrazzo-grey bg-studio-white p-4 shadow-level1">
+    <div className="space-y-2 rounded-card border border-terrazzo-grey bg-studio-white p-3 shadow-level1">
       <div>
         <h2 className="type-h3 text-carbon-black">{section.label}</h2>
         <p className="type-body text-carbon-black/60">{section.description}</p>
@@ -100,10 +100,10 @@ export function SectionCard({ sectionKey }: { sectionKey: InterviewSectionKey })
       <div className="space-y-2">
         <p className="text-sm font-semibold text-carbon-black">Live-Notizen</p>
         <Textarea
-          rows={9}
+          rows={5}
           value={note.content}
           onChange={(event) => updateSectionNote(sectionKey, event.target.value)}
-          className="min-h-[210px] text-base"
+          className="min-h-[120px] text-base"
           placeholder="Notizen während des Gesprächs..."
         />
       </div>

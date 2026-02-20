@@ -23,13 +23,24 @@ function PreviewContent() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
-    if (hydrated && searchParams.get('print') === '1') {
+    if (hydrated && interview && searchParams.get('print') === '1') {
       const timer = setTimeout(() => window.print(), 400)
       return () => clearTimeout(timer)
     }
-  }, [hydrated, searchParams])
+  }, [hydrated, interview, searchParams])
 
   if (!hydrated) return null
+
+  if (!interview) {
+    return (
+      <>
+        <Header />
+        <main id="main-content" className="flex min-h-screen items-center justify-center bg-studio-white">
+          <p className="type-body text-carbon-black/60">Kein Interview ausgewählt.</p>
+        </main>
+      </>
+    )
+  }
 
   return (
     <>

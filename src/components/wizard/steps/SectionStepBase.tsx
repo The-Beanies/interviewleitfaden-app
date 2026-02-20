@@ -35,7 +35,7 @@ export function SectionStepBase({ sectionKey }: SectionStepBaseProps) {
     [sectionKey],
   )
 
-  if (!sectionConfig) return null
+  if (!sectionConfig || !interview) return null
 
   const sectionNote = interview.config.sectionNotes[sectionKey]
   const segment = interview.config.coreFacts.segment

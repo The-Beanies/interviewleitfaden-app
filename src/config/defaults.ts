@@ -450,6 +450,7 @@ export function createDefaultInterview(name = 'Unbenanntes Interview'): Intervie
     name,
     config: createDefaultInterviewConfig(),
     status: 'geplant',
+    visibility: 'private',
     scheduledAt: now,
     conductedAt: '',
     createdAt: now,

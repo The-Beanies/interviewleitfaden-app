@@ -12,7 +12,7 @@ export function InterviewTimeline() {
 
   return (
     <div className="rounded-card border border-terrazzo-grey bg-studio-white p-4 shadow-level1">
-      <h3 className="text-sm font-semibold text-carbon-black">STEVE-Interesse im Zeitverlauf</h3>
+      <h3 className="text-sm font-semibold text-carbon-black">bean:up-Interesse im Zeitverlauf</h3>
       <div className="mt-3 space-y-2">
         {trend.length ? (
           trend.map((point) => (

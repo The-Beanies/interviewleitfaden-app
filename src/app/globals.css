@@ -153,6 +153,9 @@ body {
 
 /* --- Print Styles --- */
 @media print {
+  @page {
+    margin: 10mm;
+  }
   header, nav, .no-print, button:not(.print-visible) {
     display: none !important;
   }
@@ -172,6 +175,15 @@ body {
   section {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+  .rounded-card {
+    break-inside: avoid;
+  }
+  h2, h3 {
+    break-after: avoid;
+  }
+  .print\:hidden {
+    display: none !important;
   }
 }
 

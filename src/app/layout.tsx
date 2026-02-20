@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Manrope } from 'next/font/google'
+import { Inter, Manrope, Sora } from 'next/font/google'
 
 import { AuthSync } from '@/components/auth/AuthSync'
 import StorageWarning from '@/components/ui/storage-warning'
@@ -17,6 +17,13 @@ const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
   weight: ['400', '500'],
+  display: 'swap',
+})
+
+const sora = Sora({
+  variable: '--font-sora',
+  subsets: ['latin'],
+  weight: ['600', '700'],
   display: 'swap',
 })
 
@@ -41,7 +48,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="de" suppressHydrationWarning>
-      <body className={`${manrope.variable} ${inter.variable} antialiased`}>
+      <body className={`${manrope.variable} ${inter.variable} ${sora.variable} antialiased`}>
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-button focus:bg-botanical-green focus:px-4 focus:py-2 focus:text-studio-white focus:shadow-level2"

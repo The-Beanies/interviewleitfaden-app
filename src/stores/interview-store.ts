@@ -61,6 +61,7 @@ interface InterviewStore {
   updateFounder: (id: string, payload: Partial<AdditionalFounder>) => void
   removeFounder: (id: string) => void
   updateVisibility: (id: string, visibility: InterviewVisibility) => void
+  updateScheduledAt: (id: string, scheduledAt: string) => void
   addCustomQuestion: (sectionKey: InterviewSectionKey, text: string) => void
   removeCustomQuestion: (sectionKey: InterviewSectionKey, questionId: string) => void
 }
@@ -801,6 +802,15 @@ export const useInterviewStore = create<InterviewStore>()(
           interviews: state.interviews.map((interview) =>
             interview.id === id
               ? { ...interview, visibility, updatedAt: new Date().toISOString() }
+              : interview,
+          ),
+        }))
+      },
+      updateScheduledAt: (id, scheduledAt) => {
+        set((state) => ({
+          interviews: state.interviews.map((interview) =>
+            interview.id === id
+              ? { ...interview, scheduledAt, updatedAt: new Date().toISOString() }
               : interview,
           ),
         }))

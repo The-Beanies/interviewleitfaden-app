@@ -21,6 +21,14 @@
 
   --radius-button: 8px;
   --radius-card: 12px;
+  --radius-card-lg: 16px;
+
+  --color-electric-blue: #0000FF;
+  --color-ink: #111110;
+  --color-cloud-dancer: #F0EEE9;
+  --color-cornflower: #6B8EF0;
+  --color-text-muted: #5c5850;
+  --font-display: var(--font-sora);
 
   --color-background: #fafafa;
   --color-foreground: #262626;

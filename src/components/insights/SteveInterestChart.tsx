@@ -12,7 +12,7 @@ export function SteveInterestChart({ summary }: { summary: InsightsSummary }) {
 
   return (
     <div className="rounded-card border border-terrazzo-grey bg-studio-white p-4 shadow-level1">
-      <h3 className="text-sm font-semibold text-carbon-black">STEVE-Interesse</h3>
+      <h3 className="text-sm font-semibold text-carbon-black">bean:up-Interesse</h3>
       <div className="mt-3 h-3 overflow-hidden rounded-full bg-terrazzo-grey">
         {entries.map(([key, value]) => (
           <div

@@ -122,7 +122,7 @@ export function Header() {
                 variant="outline"
                 className="hidden sm:inline-flex"
                 aria-label="PDF exportieren"
-                onClick={() => downloadInterviewPDF(getActiveInterview())}
+                onClick={() => { const i = getActiveInterview(); if (i) downloadInterviewPDF(i); }}
               >
                 <Download className="size-4" />
                 PDF
@@ -132,7 +132,7 @@ export function Header() {
                 variant="outline"
                 className="hidden sm:inline-flex"
                 aria-label="CSV exportieren"
-                onClick={() => downloadInterviewPreviewCSV(getActiveInterview())}
+                onClick={() => { const i = getActiveInterview(); if (i) downloadInterviewPreviewCSV(i); }}
               >
                 <FileSpreadsheet className="size-4" />
                 CSV
@@ -187,7 +187,7 @@ export function Header() {
                 size="sm"
                 aria-label="PDF exportieren"
                 onClick={() => {
-                  downloadInterviewPDF(getActiveInterview())
+                  const i = getActiveInterview(); if (i) downloadInterviewPDF(i)
                   setMobileMenuOpen(false)
                 }}
               >
@@ -199,7 +199,7 @@ export function Header() {
                 size="sm"
                 aria-label="CSV exportieren"
                 onClick={() => {
-                  downloadInterviewPreviewCSV(getActiveInterview())
+                  { const i = getActiveInterview(); if (i) downloadInterviewPreviewCSV(i); }
                   setMobileMenuOpen(false)
                 }}
               >

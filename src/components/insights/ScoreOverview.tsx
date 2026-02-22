@@ -21,7 +21,7 @@ export function ScoreOverview({ interviews }: { interviews: Interview[] }) {
       <div className="mt-3 space-y-3">
         <ScoreIndicator label="Relevanz (Ø)" value={stats.relevance / count} />
         <ScoreIndicator label="Schmerz (Ø)" value={stats.pain / count} />
-        <ScoreIndicator label="STEVE-Fit (Ø)" value={stats.fit / count} />
+        <ScoreIndicator label="bean:up-Fit (Ø)" value={stats.fit / count} />
       </div>
     </div>
   )

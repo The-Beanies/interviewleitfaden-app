@@ -5,7 +5,7 @@ import { SectionWrapper } from '@/components/summary/SectionWrapper'
 
 export function SteveReactionSection({ reaction }: { reaction: SteveReaction }) {
   return (
-    <SectionWrapper id="steve-reaction" title="STEVE-Reaktion">
+    <SectionWrapper id="steve-reaction" title="bean:up-Reaktion">
       <p className="type-body">
         <strong>Erste Reaktion:</strong> {reaction.firstReaction || '-'}
       </p>

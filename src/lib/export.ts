@@ -105,7 +105,7 @@ ${summary.workaroundsAttempted.length ? summary.workaroundsAttempted.map((item) 
 - Tools: ${summary.aiToolsUsed.join(', ') || '-'}
 - Barrieren: ${summary.aiBarriers.join(', ') || '-'}
 
-## STEVE-Reaktion
+## bean:up-Reaktion
 
 - Erste Reaktion: ${summary.steveReaction.firstReaction || '-'}
 - Interesse: ${steveInterestLabel(summary.steveReaction.interestLevel)}
@@ -118,7 +118,7 @@ ${summary.workaroundsAttempted.length ? summary.workaroundsAttempted.map((item) 
 
 - Relevanz: ${summary.overallAssessment.relevanceScore}/5
 - Schmerzintensität: ${summary.overallAssessment.painIntensityScore}/5
-- STEVE-Fit: ${summary.overallAssessment.steveFitScore}/5
+- bean:up-Fit: ${summary.overallAssessment.steveFitScore}/5
 - Nachfass-Priorität: ${followUpPriorityLabel(summary.overallAssessment.followUpPriority)}
 - Notizen: ${summary.overallAssessment.notes || '-'}
 
@@ -279,9 +279,9 @@ export function downloadInsightsReport(summary: InsightsSummary) {
 - Gesamtinterviews: ${summary.totalInterviews}
 - Segment retrospektiv: ${summary.segmentBreakdown.retrospektiv}
 - Segment aktuell gründend: ${summary.segmentBreakdown.aktuell_gruendend}
-- Durchschnittlicher STEVE-Fit: ${summary.avgSteveFit.toFixed(2)}/5
+- Durchschnittlicher bean:up-Fit: ${summary.avgSteveFit.toFixed(2)}/5
 
-## STEVE-Interesse
+## bean:up-Interesse
 
 - Stark: ${summary.steveInterestDistribution.stark}
 - Höflich: ${summary.steveInterestDistribution.hoeflich}

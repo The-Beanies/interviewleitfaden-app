@@ -1,15 +1,13 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
-import { AISuggestButton } from '@/components/wizard/AISuggestButton'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { createId } from '@/lib/utils'
-import { mockAIService } from '@/services/ai-mock'
 import { useInterviewStore } from '@/stores/interview-store'
 
 import type { WizardStepProps } from './types'
@@ -40,26 +38,16 @@ export function SummaryStep({ interview }: WizardStepProps) {
 
   return (
     <div className="space-y-5">
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h2 className="type-h4 text-carbon-black">Zusammenfassung</h2>
-          <p className="type-body text-carbon-black/60">Strukturierte Verdichtung nach dem Interview.</p>
-        </div>
-        <AISuggestButton
-          label="KI-Zusammenfassung generieren"
-          onSuggest={() =>
-            mockAIService.generateSummary({
-              coreFacts: interview.config.coreFacts,
-              sectionNotes: interview.config.sectionNotes,
-              allQuotes: interview.config.allQuotes,
-            })
-          }
-          onApply={(payload) => updateSummary(payload)}
-        />
+      <div>
+        <h2 className="type-h4 text-carbon-black">Zusammenfassung</h2>
+        <p className="type-body text-carbon-black/60">
+          Fuelle die Felder basierend auf deinen Notizen aus den vorherigen Abschnitten aus. Jedes Feld hilft dir, die wichtigsten Erkenntnisse strukturiert festzuhalten.
+        </p>
       </div>
 
       <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
         <Label>JTBD-Auslöser</Label>
+        <p className="text-xs text-carbon-black/50">Was hat den Gruender dazu bewogen, aktiv nach einer Loesung zu suchen?</p>
         <Textarea
           rows={3}
           value={summary.jtbd.trigger}
@@ -77,6 +65,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
       <div className="grid gap-3 md:grid-cols-2">
         <ListField
           label="Push-Faktoren"
+          helperText="Was treibt den Gruender weg von der aktuellen Situation?"
           value={listToText(summary.jtbd.pushFactors)}
           onChange={(value) =>
             updateSummary({
@@ -89,6 +78,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
         />
         <ListField
           label="Pull-Faktoren"
+          helperText="Was zieht den Gruender hin zu einer neuen Loesung?"
           value={listToText(summary.jtbd.pullFactors)}
           onChange={(value) =>
             updateSummary({
@@ -101,6 +91,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
         />
         <ListField
           label="Ängste"
+          helperText="Welche Befuerchtungen hat der Gruender bzgl. einer Veraenderung?"
           value={listToText(summary.jtbd.anxiety)}
           onChange={(value) =>
             updateSummary({
@@ -113,6 +104,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
         />
         <ListField
           label="Gewohnheiten"
+          helperText="Welche bestehenden Gewohnheiten verhindern die Veraenderung?"
           value={listToText(summary.jtbd.habit)}
           onChange={(value) =>
             updateSummary({
@@ -206,17 +198,20 @@ export function SummaryStep({ interview }: WizardStepProps) {
       <div className="grid gap-3 md:grid-cols-2">
         <ListField
           label="Umgehungslösungen"
+          helperText="Welche Workarounds nutzt der Gruender aktuell?"
           value={listToText(summary.workaroundsAttempted)}
           onChange={(value) => updateSummary({ workaroundsAttempted: textToList(value) })}
         />
         <div className="space-y-3">
           <ListField
             label="KI-Tools"
+            helperText="Welche KI-Tools werden bereits genutzt?"
             value={listToText(summary.aiToolsUsed)}
             onChange={(value) => updateSummary({ aiToolsUsed: textToList(value) })}
           />
           <ListField
             label="KI-Barrieren"
+            helperText="Was haelt den Gruender davon ab, mehr KI einzusetzen?"
             value={listToText(summary.aiBarriers)}
             onChange={(value) => updateSummary({ aiBarriers: textToList(value) })}
           />
@@ -225,6 +220,7 @@ export function SummaryStep({ interview }: WizardStepProps) {
 
       <div className="rounded-card border border-terrazzo-grey p-4">
         <Label>KI-Haltung</Label>
+        <p className="text-xs text-carbon-black/50">Grundsaetzliche Einstellung gegenueber KI-Technologie.</p>
         <Select
           className="mt-2"
           value={summary.aiAttitude}
@@ -248,7 +244,8 @@ export function SummaryStep({ interview }: WizardStepProps) {
       </div>
 
       <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
-        <Label>STEVE - Erste Reaktion</Label>
+        <Label>bean:up - Erste Reaktion</Label>
+        <p className="text-xs text-carbon-black/50">Spontane Worte und Koerpersprache bei Vorstellung von bean:up.</p>
         <Textarea
           rows={3}
           value={summary.steveReaction.firstReaction}
@@ -263,33 +260,72 @@ export function SummaryStep({ interview }: WizardStepProps) {
         />
       </div>
 
-      <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
-        <Label>Wichtigste Zitate (eine Zeile je Zitat)</Label>
-        <Textarea
-          rows={4}
-          value={summary.keyQuotes.map((quote) => quote.text).join('\n')}
-          onChange={(event) =>
-            updateSummary({
-              keyQuotes: textToList(event.target.value).map((text) => ({
-                id: createId('quote'),
-                text,
-                sectionKey: 'abschluss',
-                isVerbatim: true,
-                createdAt: new Date().toISOString(),
-              })),
-            })
-          }
-        />
-      </div>
+      <QuotesField
+        value={summary.keyQuotes.map((quote) => quote.text).join('\n')}
+        onChange={(raw) =>
+          updateSummary({
+            keyQuotes: textToList(raw).map((text) => ({
+              id: createId('quote'),
+              text,
+              sectionKey: 'abschluss',
+              isVerbatim: true,
+              createdAt: new Date().toISOString(),
+            })),
+          })
+        }
+      />
     </div>
   )
 }
 
-function ListField({ label, value, onChange }: { label: string; value: string; onChange: (value: string) => void }) {
+function ListField({
+  label,
+  helperText,
+  value,
+  onChange,
+}: {
+  label: string
+  helperText?: string
+  value: string
+  onChange: (value: string) => void
+}) {
+  const [local, setLocal] = useState(value)
+
+  useEffect(() => {
+    setLocal(value)
+  }, [value])
+
   return (
     <div className="space-y-2 rounded-card border border-terrazzo-grey p-3">
       <Label>{label}</Label>
-      <Textarea rows={4} value={value} onChange={(event) => onChange(event.target.value)} />
+      {helperText && <p className="text-xs text-carbon-black/50">{helperText}</p>}
+      <Textarea
+        rows={4}
+        value={local}
+        onChange={(event) => setLocal(event.target.value)}
+        onBlur={() => onChange(local)}
+      />
+    </div>
+  )
+}
+
+function QuotesField({ value, onChange }: { value: string; onChange: (raw: string) => void }) {
+  const [local, setLocal] = useState(value)
+
+  useEffect(() => {
+    setLocal(value)
+  }, [value])
+
+  return (
+    <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
+      <Label>Wichtigste Zitate (eine Zeile je Zitat)</Label>
+      <p className="text-xs text-carbon-black/50">Die praegnantesten woertlichen Zitate. Eine Zeile pro Zitat.</p>
+      <Textarea
+        rows={4}
+        value={local}
+        onChange={(event) => setLocal(event.target.value)}
+        onBlur={() => onChange(local)}
+      />
     </div>
   )
 }

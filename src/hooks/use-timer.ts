@@ -15,13 +15,28 @@ function msSince(iso: string | null) {
 }
 
 export function useTimer(sectionKey: InterviewSectionKey, durationMinutes: number) {
-  const interview = useInterviewStore((state) => state.getActiveInterview())
+  const interview = useInterviewStore((state) => state.getActiveInterview())!
   const updateTimerState = useInterviewStore((state) => state.updateTimerState)
 
   const timerState = interview.config.timerState
   const [tick, setTick] = useState(0)
 
   useEffect(() => {
+    // Auto-pause if session is stale (e.g. browser was closed overnight)
+    const STALE_THRESHOLD_MS = 2 * 60 * 60 * 1000 // 2 hours
+    if (
+      !timerState.isPaused &&
+      timerState.sectionStartedAt &&
+      msSince(timerState.sectionStartedAt) > STALE_THRESHOLD_MS
+    ) {
+      updateTimerState({
+        sectionElapsedMs: timerState.sectionElapsedMs,
+        sectionStartedAt: null,
+        isPaused: true,
+      })
+      return
+    }
+
     if (timerState.currentSectionKey !== sectionKey) {
       const previousElapsed =
         timerState.currentSectionKey && !timerState.isPaused

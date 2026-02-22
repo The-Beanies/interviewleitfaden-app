@@ -34,7 +34,7 @@ export function AssessmentStep({ interview }: WizardStepProps) {
         onChange={(value) => updateOverallAssessment({ painIntensityScore: value as 1 | 2 | 3 | 4 | 5 })}
       />
       <ScoreSlider
-        label="STEVE-Fit"
+        label="bean:up-Fit"
         tooltip={TOOLTIP_TEXT.steveFitScore}
         value={assessment.steveFitScore}
         onChange={(value) => updateOverallAssessment({ steveFitScore: value as 1 | 2 | 3 | 4 | 5 })}
@@ -62,7 +62,7 @@ export function AssessmentStep({ interview }: WizardStepProps) {
 
       <div className="grid gap-3 md:grid-cols-2">
         <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
-          <Label>STEVE-Interesse</Label>
+          <Label>bean:up-Interesse</Label>
           <Select
             value={steveReaction.interestLevel}
             onChange={(event) =>

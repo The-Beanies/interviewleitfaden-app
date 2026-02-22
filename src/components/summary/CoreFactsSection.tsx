@@ -56,7 +56,7 @@ export function CoreFactsSection({ facts }: { facts: CoreFacts }) {
 
 function Field({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-button border border-terrazzo-grey bg-terrazzo-grey/10 px-3 py-2">
+    <div className={`rounded-button border border-terrazzo-grey bg-terrazzo-grey/10 px-3 py-2${!value ? ' print:hidden' : ''}`}>
       <p className="type-caption uppercase tracking-wide text-carbon-black/50">{label}</p>
       <p className="type-body text-carbon-black">{value || '-'}</p>
     </div>

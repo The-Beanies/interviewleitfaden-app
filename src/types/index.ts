@@ -2,6 +2,7 @@
 
 export type InterviewSegment = 'retrospektiv' | 'aktuell_gruendend'
 export type InterviewStatus = 'geplant' | 'in_durchfuehrung' | 'abgeschlossen' | 'abgebrochen'
+export type InterviewVisibility = 'private' | 'public'
 export type PainIntensity = 1 | 2 | 3 | 4 | 5
 export type SteveInterestLevel = 'stark' | 'hoeflich' | 'skeptisch'
 export type AIAttitude = 'enthusiastisch' | 'offen' | 'neutral' | 'skeptisch' | 'ablehnend'
@@ -178,6 +179,7 @@ export interface Interview {
   name: string
   config: InterviewConfig
   status: InterviewStatus
+  visibility: InterviewVisibility
   scheduledAt: string
   conductedAt: string
   createdAt: string

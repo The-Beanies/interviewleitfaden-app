@@ -45,6 +45,20 @@ function createFallbackWizardState() {
 
 export function WizardShell() {
   const activeInterview = useInterviewStore((state) => state.getActiveInterview())
+
+  if (!activeInterview) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <p className="type-body text-carbon-black/60">Kein Interview ausgewählt.</p>
+      </div>
+    )
+  }
+
+  return <WizardShellInner />
+}
+
+function WizardShellInner() {
+  const activeInterview = useInterviewStore((state) => state.getActiveInterview())!
   const activeInterviewId = useInterviewStore((state) => state.activeInterviewId)
   const renameInterview = useInterviewStore((state) => state.renameInterview)
 
@@ -93,7 +107,7 @@ export function WizardShell() {
   }
 
   return (
-    <div className="grid h-full min-h-[calc(100vh-6rem)] gap-4 lg:grid-cols-[260px_1fr]">
+    <div className="grid h-full gap-4 lg:grid-cols-[260px_1fr]">
       {/* Desktop sidebar - hidden below lg */}
       <aside className="hidden rounded-card border border-terrazzo-grey bg-studio-white p-4 shadow-level1 lg:block">
         <p className="text-xs font-semibold uppercase tracking-wide text-carbon-black/50">Fortschritt</p>

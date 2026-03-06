@@ -316,6 +316,11 @@ export const useInterviewStore = create<InterviewStore>()(
           }
         })
         useWizardStore.getState().removeInterview(id)
+        if (currentUserId) {
+          import('@/lib/supabase/sync').then(({ deleteInterviewRemote }) => {
+            deleteInterviewRemote(id)
+          })
+        }
       },
       renameInterview: (id, name) => {
         const trimmed = name.trim()

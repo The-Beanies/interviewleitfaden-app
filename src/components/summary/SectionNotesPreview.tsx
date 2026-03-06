@@ -16,7 +16,7 @@ export function SectionNotesPreview({ sectionNotes }: SectionNotesPreviewProps) 
   if (nonEmpty.length === 0) return null
 
   return (
-    <SectionWrapper id="section-notes" title="Abschnittsnotizen">
+    <SectionWrapper id="section-notes" title="Abschnittsnotizen" allowPrintBreak>
       <div className="space-y-6">
         {nonEmpty.map((key) => {
           const note = sectionNotes[key]

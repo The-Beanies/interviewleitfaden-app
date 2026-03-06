@@ -36,3 +36,5 @@ Thumbs.db
 
 # Supabase CLI
 supabase/.temp/
+interview-app-new.log
+interview-app.log

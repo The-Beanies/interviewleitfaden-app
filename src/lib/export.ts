@@ -154,6 +154,19 @@ function flattenChecklist(interview: Interview) {
     .join(' | ')
 }
 
+function flattenCustomQuestions(interview: Interview): Record<string, string> {
+  const result: Record<string, string> = {}
+  const customQuestions = interview.config.customQuestions
+  if (!customQuestions) return result
+  for (const key of Object.keys(customQuestions) as InterviewSectionKey[]) {
+    const questions = customQuestions[key]
+    result[`custom_questions_${key}`] = Array.isArray(questions)
+      ? questions.map((q) => q.text).join(' | ')
+      : ''
+  }
+  return result
+}
+
 export function downloadInterviewJSON(interview: Interview) {
   downloadTextFile(
     JSON.stringify(interview, null, 2),
@@ -250,6 +263,7 @@ export function downloadInterviewPreviewCSV(interview: Interview) {
     timer_section_elapsed_ms: String(interview.config.timerState.sectionElapsedMs),
     timer_total_elapsed_ms: String(interview.config.timerState.totalElapsedMs),
     timer_is_paused: interview.config.timerState.isPaused ? 'ja' : 'nein',
+    ...flattenCustomQuestions(interview),
   }
 
   const headers = Object.keys(record)

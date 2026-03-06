@@ -177,15 +177,24 @@ body {
   .shadow-level1, .shadow-level2 {
     box-shadow: none !important;
   }
+  * {
+    overflow: visible !important;
+  }
   main {
     max-width: none !important;
     width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
   }
   section {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+  .print-allow-break {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
   }
   .rounded-card {
     break-inside: avoid;

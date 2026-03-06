@@ -5,7 +5,7 @@ import { persist } from 'zustand/middleware'
 
 import type { WizardState } from '@/types'
 
-const MAX_STEP = 9
+const MAX_STEP = 8
 
 interface WizardStore {
   currentInterviewId: string | null
@@ -182,7 +182,22 @@ export const useWizardStore = create<WizardStore>()(
     }),
     {
       name: 'interview-guide-wizard',
-      version: 1,
+      version: 2,
+      migrate: (persistedState: unknown) => {
+        const state = persistedState as {
+          currentInterviewId: string | null
+          byInterview: Record<string, WizardState>
+        }
+        const byInterview: Record<string, WizardState> = {}
+        for (const [id, ws] of Object.entries(state.byInterview ?? {})) {
+          byInterview[id] = {
+            currentStep: Math.min(ws.currentStep, MAX_STEP),
+            completedSteps: [],
+            validationErrors: {},
+          }
+        }
+        return { ...state, byInterview }
+      },
       partialize: (state) => ({
         currentInterviewId: state.currentInterviewId,
         byInterview: state.byInterview,

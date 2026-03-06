@@ -5,11 +5,12 @@ interface SectionWrapperProps {
   title: string
   subtitle?: string
   children: ReactNode
+  allowPrintBreak?: boolean
 }
 
-export function SectionWrapper({ id, title, subtitle, children }: SectionWrapperProps) {
+export function SectionWrapper({ id, title, subtitle, children, allowPrintBreak }: SectionWrapperProps) {
   return (
-    <section id={id} className="mx-auto w-full max-w-5xl px-4 py-8 md:px-8">
+    <section id={id} className={`mx-auto w-full max-w-5xl px-4 py-8 md:px-8${allowPrintBreak ? ' print-allow-break' : ''}`}>
       <div className="rounded-card border border-terrazzo-grey bg-studio-white p-5 shadow-level1 md:p-6">
         <header className="mb-4 border-b border-terrazzo-grey pb-3">
           <h2 className="type-h3 text-carbon-black">{title}</h2>

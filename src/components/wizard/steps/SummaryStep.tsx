@@ -41,8 +41,16 @@ export function SummaryStep({ interview }: WizardStepProps) {
       <div>
         <h2 className="type-h4 text-carbon-black">Zusammenfassung</h2>
         <p className="type-body text-carbon-black/60">
-          Fuelle die Felder basierend auf deinen Notizen aus den vorherigen Abschnitten aus. Jedes Feld hilft dir, die wichtigsten Erkenntnisse strukturiert festzuhalten.
+          Hier fasst du die wichtigsten Erkenntnisse aus dem Interview zusammen. Diese Daten fliessen in den PDF-Export und die teamuebergreifende Auswertung ein.
         </p>
+        <ul className="mt-2 list-disc pl-5 text-sm text-carbon-black/60 space-y-1">
+          <li><strong>JTBD</strong> — Was hat den Gruender dazu getrieben, aktiv nach einer Loesung zu suchen? (Push/Pull/Aengste/Gewohnheiten)</li>
+          <li><strong>Schmerzpunkte</strong> — Konkrete Probleme, deren Intensitaet, Haeufigkeit und aktuelle Loesungsversuche</li>
+          <li><strong>Umgehungsloesungen</strong> — Workarounds, die der Gruender aktuell nutzt</li>
+          <li><strong>KI-Haltung</strong> — Einstellung zu KI, bereits genutzte Tools und Barrieren</li>
+          <li><strong>bean:up-Reaktion</strong> — Erste spontane Reaktion auf das Produktkonzept</li>
+          <li><strong>Schluesselzitate</strong> — Die praegnantesten woertlichen Aussagen (eine pro Zeile)</li>
+        </ul>
       </div>
 
       <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">

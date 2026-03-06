@@ -4,7 +4,6 @@ import type { Interview } from '@/types'
 
 import { AssessmentSection } from '@/components/summary/AssessmentSection'
 import { AIAttitudeSection } from '@/components/summary/AIAttitudeSection'
-import { ChecklistPreview } from '@/components/summary/ChecklistPreview'
 import { CoreFactsSection } from '@/components/summary/CoreFactsSection'
 import { CoverSection } from '@/components/summary/CoverSection'
 import { JTBDSection } from '@/components/summary/JTBDSection'
@@ -47,7 +46,6 @@ export function SummaryShell({ interview }: { interview: Interview }) {
     <div className="bg-studio-white text-carbon-black">
       <CoverSection interview={interview} />
       <CoreFactsSection facts={interview.config.coreFacts} />
-      <ChecklistPreview checklist={interview.config.checklist} />
       {hasJTBDData(summary.jtbd) && <JTBDSection jtbd={summary.jtbd} />}
       {summary.painPoints.length > 0 && <PainPointsSection painPoints={summary.painPoints} />}
       {summary.workaroundsAttempted.length > 0 && <WorkaroundsSection workarounds={summary.workaroundsAttempted} />}

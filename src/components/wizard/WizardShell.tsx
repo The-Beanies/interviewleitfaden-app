@@ -12,7 +12,6 @@ import { useWizardStore } from '@/stores/wizard-store'
 
 import { AbschlussStep } from '@/components/wizard/steps/AbschlussStep'
 import { AssessmentStep } from '@/components/wizard/steps/AssessmentStep'
-import { ChecklistStep } from '@/components/wizard/steps/ChecklistStep'
 import { CoreFactsStep } from '@/components/wizard/steps/CoreFactsStep'
 import { GruendungsreiseStep } from '@/components/wizard/steps/GruendungsreiseStep'
 import { KIStep } from '@/components/wizard/steps/KIStep'
@@ -24,7 +23,6 @@ import type { WizardStepProps } from '@/components/wizard/steps/types'
 
 const STEP_COMPONENTS: Array<(props: WizardStepProps) => ReactElement> = [
   CoreFactsStep,
-  ChecklistStep,
   WarmupStep,
   GruendungsreiseStep,
   SchmerzStep,

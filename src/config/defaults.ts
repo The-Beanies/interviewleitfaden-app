@@ -19,7 +19,6 @@ import type {
 
 export const WIZARD_STEP_LABELS = [
   'Basisdaten',
-  'Checkliste',
   'Warm-up',
   'Gründungsreise',
   'Schmerz & Umgehungslösungen',

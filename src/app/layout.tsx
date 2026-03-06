@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter, Manrope, Sora } from 'next/font/google'
 
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { AuthSync } from '@/components/auth/AuthSync'
 import StorageWarning from '@/components/ui/storage-warning'
 
@@ -58,6 +59,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <AuthSync />
         <StorageWarning />
         {children}
+        <SpeedInsights />
       </body>
     </html>
   )

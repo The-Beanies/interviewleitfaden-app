@@ -1,18 +1,19 @@
 'use client'
 
 import { useMemo } from 'react'
+import dynamic from 'next/dynamic'
 
 import { useInterviewStore } from '@/stores/interview-store'
 import { useInsightsStore } from '@/stores/insights-store'
 
-import { AIAttitudeOverview } from './AIAttitudeOverview'
-import { InterviewTimeline } from './InterviewTimeline'
-import { PainPointAggregation } from './PainPointAggregation'
-import { QuoteWall } from './QuoteWall'
-import { ScoreOverview } from './ScoreOverview'
-import { SegmentBreakdown } from './SegmentBreakdown'
-import { SteveInterestChart } from './SteveInterestChart'
-import { WorkaroundPatterns } from './WorkaroundPatterns'
+const AIAttitudeOverview = dynamic(() => import('./AIAttitudeOverview').then((m) => m.AIAttitudeOverview), { ssr: false })
+const InterviewTimeline = dynamic(() => import('./InterviewTimeline').then((m) => m.InterviewTimeline), { ssr: false })
+const PainPointAggregation = dynamic(() => import('./PainPointAggregation').then((m) => m.PainPointAggregation), { ssr: false })
+const QuoteWall = dynamic(() => import('./QuoteWall').then((m) => m.QuoteWall), { ssr: false })
+const ScoreOverview = dynamic(() => import('./ScoreOverview').then((m) => m.ScoreOverview), { ssr: false })
+const SegmentBreakdown = dynamic(() => import('./SegmentBreakdown').then((m) => m.SegmentBreakdown), { ssr: false })
+const SteveInterestChart = dynamic(() => import('./SteveInterestChart').then((m) => m.SteveInterestChart), { ssr: false })
+const WorkaroundPatterns = dynamic(() => import('./WorkaroundPatterns').then((m) => m.WorkaroundPatterns), { ssr: false })
 
 export function InsightsDashboard() {
   const interviews = useInterviewStore((state) => state.interviews)

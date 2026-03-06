@@ -189,11 +189,11 @@ export function downloadInterviewPDF(_interview: Interview) {
   }
 }
 
-export function downloadInterviewPreviewCSV(interview: Interview) {
+function interviewToRecord(interview: Interview): Record<string, string> {
   const summary = interview.config.summary
   const core = interview.config.coreFacts
 
-  const record: Record<string, string> = {
+  return {
     id: interview.id,
     name: interview.name,
     status: interview.status,
@@ -265,10 +265,21 @@ export function downloadInterviewPreviewCSV(interview: Interview) {
     timer_is_paused: interview.config.timerState.isPaused ? 'ja' : 'nein',
     ...flattenCustomQuestions(interview),
   }
+}
 
-  const headers = Object.keys(record)
-  const row = headers.map((header) => escapeCsv(record[header] ?? '')).join(',')
-  downloadTextFile([headers.join(','), row].join('\n'), `${interview.name.replace(/\s+/g, '_')}-preview.csv`, 'text/csv;charset=utf-8')
+export function downloadInterviewPreviewCSV(interviews: Interview[]) {
+  if (interviews.length === 0) return
+
+  const records = interviews.map(interviewToRecord)
+  const headers = Object.keys(records[0])
+  const rows = records.map((record) =>
+    headers.map((header) => escapeCsv(record[header] ?? '')).join(','),
+  )
+  const csv = [headers.join(','), ...rows].join('\n')
+  const filename = interviews.length === 1
+    ? `${interviews[0].name.replace(/\s+/g, '_')}-preview.csv`
+    : `alle-interviews-${new Date().toISOString().slice(0, 10)}.csv`
+  downloadTextFile(csv, filename, 'text/csv;charset=utf-8')
 }
 
 export function downloadInsightsReport(summary: InsightsSummary) {

@@ -35,11 +35,10 @@ export function Header() {
     const active = state.interviews.find((i) => i.id === state.activeInterviewId)
     return active?.name ?? 'Unbenanntes Interview'
   })
-  const interviews = useInterviewStore((state) => state.interviews)
-  const interviewOptions = useMemo(
-    () => interviews.map((i) => ({ id: i.id, name: i.name })),
-    [interviews],
+  const interviewOptions = useInterviewStore((state) =>
+    state.interviews.map((i) => ({ id: i.id, name: i.name })),
   )
+  const interviews = useInterviewStore((state) => state.interviews)
   const getActiveInterview = useInterviewStore((state) => state.getActiveInterview)
   const setActiveInterview = useInterviewStore((state) => state.setActiveInterview)
   const createInterview = useInterviewStore((state) => state.createInterview)
@@ -59,6 +58,7 @@ export function Header() {
             type="button"
             onClick={() => setMobileMenuOpen((prev) => !prev)}
             aria-label={mobileMenuOpen ? 'Menü schließen' : 'Menü öffnen'}
+            aria-expanded={mobileMenuOpen}
             className="flex items-center gap-2 md:hidden"
           >
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -131,8 +131,8 @@ export function Header() {
               <Button
                 variant="outline"
                 className="hidden sm:inline-flex"
-                aria-label="CSV exportieren"
-                onClick={() => { const i = getActiveInterview(); if (i) downloadInterviewPreviewCSV(i); }}
+                aria-label="Alle Interviews als CSV exportieren"
+                onClick={() => downloadInterviewPreviewCSV(interviews)}
               >
                 <FileSpreadsheet className="size-4" />
                 CSV
@@ -162,7 +162,7 @@ export function Header() {
 
       {/* Mobile navigation dropdown */}
       {mobileMenuOpen && (
-        <nav className="border-t border-terrazzo-grey bg-studio-white px-4 py-2 md:hidden">
+        <nav role="navigation" aria-label="Hauptnavigation" className="border-t border-terrazzo-grey bg-studio-white px-4 py-2 md:hidden">
           {NAV_ITEMS.map((item) => (
             <Link
               key={item.href}
@@ -197,9 +197,9 @@ export function Header() {
               <Button
                 variant="outline"
                 size="sm"
-                aria-label="CSV exportieren"
+                aria-label="Alle Interviews als CSV exportieren"
                 onClick={() => {
-                  { const i = getActiveInterview(); if (i) downloadInterviewPreviewCSV(i); }
+                  downloadInterviewPreviewCSV(interviews)
                   setMobileMenuOpen(false)
                 }}
               >

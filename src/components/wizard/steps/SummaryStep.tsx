@@ -54,9 +54,11 @@ export function SummaryStep({ interview }: WizardStepProps) {
       </div>
 
       <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
-        <Label>JTBD-Auslöser</Label>
-        <p className="text-xs text-carbon-black/50">Was hat den Gruender dazu bewogen, aktiv nach einer Loesung zu suchen?</p>
+        <Label htmlFor="jtbd-trigger">JTBD-Auslöser</Label>
+        <p id="jtbd-trigger-help" className="text-xs text-carbon-black/50">Was hat den Gruender dazu bewogen, aktiv nach einer Loesung zu suchen?</p>
         <Textarea
+          id="jtbd-trigger"
+          aria-describedby="jtbd-trigger-help"
           rows={3}
           value={summary.jtbd.trigger}
           onChange={(event) =>
@@ -227,9 +229,11 @@ export function SummaryStep({ interview }: WizardStepProps) {
       </div>
 
       <div className="rounded-card border border-terrazzo-grey p-4">
-        <Label>KI-Haltung</Label>
-        <p className="text-xs text-carbon-black/50">Grundsaetzliche Einstellung gegenueber KI-Technologie.</p>
+        <Label htmlFor="ai-attitude">KI-Haltung</Label>
+        <p id="ai-attitude-help" className="text-xs text-carbon-black/50">Grundsaetzliche Einstellung gegenueber KI-Technologie.</p>
         <Select
+          id="ai-attitude"
+          aria-describedby="ai-attitude-help"
           className="mt-2"
           value={summary.aiAttitude}
           onChange={(event) =>
@@ -252,9 +256,11 @@ export function SummaryStep({ interview }: WizardStepProps) {
       </div>
 
       <div className="space-y-2 rounded-card border border-terrazzo-grey p-4">
-        <Label>bean:up - Erste Reaktion</Label>
-        <p className="text-xs text-carbon-black/50">Spontane Worte und Koerpersprache bei Vorstellung von bean:up.</p>
+        <Label htmlFor="steve-reaction">bean:up - Erste Reaktion</Label>
+        <p id="steve-reaction-help" className="text-xs text-carbon-black/50">Spontane Worte und Koerpersprache bei Vorstellung von bean:up.</p>
         <Textarea
+          id="steve-reaction"
+          aria-describedby="steve-reaction-help"
           rows={3}
           value={summary.steveReaction.firstReaction}
           onChange={(event) =>

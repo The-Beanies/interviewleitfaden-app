@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 
-import { useInterviewStore } from '@/stores/interview-store'
+import { useInterviewStore, selectActiveInterview } from '@/stores/interview-store'
 import type { InterviewSectionKey } from '@/types'
 
 function nowIso() {
@@ -15,7 +15,7 @@ function msSince(iso: string | null) {
 }
 
 export function useTimer(sectionKey: InterviewSectionKey, durationMinutes: number) {
-  const interview = useInterviewStore((state) => state.getActiveInterview())!
+  const interview = useInterviewStore(selectActiveInterview)!
   const updateTimerState = useInterviewStore((state) => state.updateTimerState)
 
   const timerState = interview.config.timerState

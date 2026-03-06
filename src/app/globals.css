@@ -189,18 +189,20 @@ body {
     height: auto !important;
   }
   section {
-    break-inside: avoid;
-    page-break-inside: avoid;
-  }
-  .print-allow-break {
-    break-inside: auto !important;
-    page-break-inside: auto !important;
+    break-inside: auto;
+    page-break-inside: auto;
   }
   .rounded-card {
-    break-inside: avoid;
+    break-inside: auto;
+    page-break-inside: auto;
   }
   h2, h3 {
     break-after: avoid;
+  }
+  /* Keep small items together */
+  li, blockquote, .print-no-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
   .print\:hidden {
     display: none !important;

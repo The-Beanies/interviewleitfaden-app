@@ -1,36 +1,28 @@
 'use client'
 
-import { useEffect, useState, type ReactElement } from 'react'
+import { useEffect, useState, type ComponentType } from 'react'
+import dynamic from 'next/dynamic'
 
 import { Pencil } from 'lucide-react'
 import { WIZARD_STEP_LABELS } from '@/config/defaults'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
-import { useInterviewStore } from '@/stores/interview-store'
+import { useInterviewStore, selectActiveInterview } from '@/stores/interview-store'
 import { useWizardStore } from '@/stores/wizard-store'
 
-import { AbschlussStep } from '@/components/wizard/steps/AbschlussStep'
-import { AssessmentStep } from '@/components/wizard/steps/AssessmentStep'
-import { CoreFactsStep } from '@/components/wizard/steps/CoreFactsStep'
-import { GruendungsreiseStep } from '@/components/wizard/steps/GruendungsreiseStep'
-import { KIStep } from '@/components/wizard/steps/KIStep'
-import { SchmerzStep } from '@/components/wizard/steps/SchmerzStep'
-import { SteveTestStep } from '@/components/wizard/steps/SteveTestStep'
-import { SummaryStep } from '@/components/wizard/steps/SummaryStep'
-import { WarmupStep } from '@/components/wizard/steps/WarmupStep'
 import type { WizardStepProps } from '@/components/wizard/steps/types'
 
-const STEP_COMPONENTS: Array<(props: WizardStepProps) => ReactElement> = [
-  CoreFactsStep,
-  WarmupStep,
-  GruendungsreiseStep,
-  SchmerzStep,
-  KIStep,
-  SteveTestStep,
-  AbschlussStep,
-  SummaryStep,
-  AssessmentStep,
+const STEP_COMPONENTS: Array<ComponentType<WizardStepProps>> = [
+  dynamic(() => import('@/components/wizard/steps/CoreFactsStep').then((m) => m.CoreFactsStep), { ssr: false }),
+  dynamic(() => import('@/components/wizard/steps/WarmupStep').then((m) => m.WarmupStep), { ssr: false }),
+  dynamic(() => import('@/components/wizard/steps/GruendungsreiseStep').then((m) => m.GruendungsreiseStep), { ssr: false }),
+  dynamic(() => import('@/components/wizard/steps/SchmerzStep').then((m) => m.SchmerzStep), { ssr: false }),
+  dynamic(() => import('@/components/wizard/steps/KIStep').then((m) => m.KIStep), { ssr: false }),
+  dynamic(() => import('@/components/wizard/steps/SteveTestStep').then((m) => m.SteveTestStep), { ssr: false }),
+  dynamic(() => import('@/components/wizard/steps/AbschlussStep').then((m) => m.AbschlussStep), { ssr: false }),
+  dynamic(() => import('@/components/wizard/steps/SummaryStep').then((m) => m.SummaryStep), { ssr: false }),
+  dynamic(() => import('@/components/wizard/steps/AssessmentStep').then((m) => m.AssessmentStep), { ssr: false }),
 ]
 
 function createFallbackWizardState() {
@@ -42,7 +34,7 @@ function createFallbackWizardState() {
 }
 
 export function WizardShell() {
-  const activeInterview = useInterviewStore((state) => state.getActiveInterview())
+  const activeInterview = useInterviewStore(selectActiveInterview)
 
   if (!activeInterview) {
     return (
@@ -56,12 +48,12 @@ export function WizardShell() {
 }
 
 function WizardShellInner() {
-  const activeInterview = useInterviewStore((state) => state.getActiveInterview())!
+  const activeInterview = useInterviewStore(selectActiveInterview)!
   const activeInterviewId = useInterviewStore((state) => state.activeInterviewId)
   const renameInterview = useInterviewStore((state) => state.renameInterview)
 
   const currentInterviewId = useWizardStore((state) => state.currentInterviewId)
-  const byInterview = useWizardStore((state) => state.byInterview)
+  const wizardData = useWizardStore((state) => state.byInterview[activeInterviewId])
   const setInterview = useWizardStore((state) => state.setInterview)
   const nextStep = useWizardStore((state) => state.nextStep)
   const prevStep = useWizardStore((state) => state.prevStep)
@@ -77,8 +69,7 @@ function WizardShellInner() {
     }
   }, [activeInterviewId, currentInterviewId, setInterview])
 
-  const wizardState =
-    (currentInterviewId ? byInterview[currentInterviewId] : undefined) ?? createFallbackWizardState()
+  const wizardState = wizardData ?? createFallbackWizardState()
 
   const currentStep = wizardState.currentStep
   const CurrentStep = STEP_COMPONENTS[currentStep] ?? STEP_COMPONENTS[0]
@@ -114,7 +105,7 @@ function WizardShellInner() {
         </p>
         <Progress value={progress} className="mt-3" />
 
-        <ol className="mt-4 space-y-1.5">
+        <ol className="mt-4 space-y-1.5" aria-label="Wizard-Schritte">
           {WIZARD_STEP_LABELS.map((label, index) => {
             const active = currentStep === index
             const completed = wizardState.completedSteps.includes(index)
@@ -124,6 +115,7 @@ function WizardShellInner() {
                 <button
                   type="button"
                   onClick={() => goToStep(index)}
+                  aria-current={active ? 'step' : undefined}
                   className={cn(
                     'flex w-full items-center justify-between rounded-button px-2.5 py-2 text-left text-sm transition',
                     active
@@ -152,7 +144,7 @@ function WizardShellInner() {
       </aside>
 
       {/* Mobile step indicator - shown below lg */}
-      <div className="flex items-center gap-1.5 overflow-x-auto px-1 py-2 lg:hidden">
+      <div className="flex items-center gap-1.5 overflow-x-auto px-1 py-2 lg:hidden" role="list" aria-label="Wizard-Schritte">
         {WIZARD_STEP_LABELS.map((label, index) => {
           const active = currentStep === index
           const completed = wizardState.completedSteps.includes(index)
@@ -163,6 +155,7 @@ function WizardShellInner() {
               type="button"
               onClick={() => goToStep(index)}
               title={label}
+              aria-current={active ? 'step' : undefined}
               className={cn(
                 'inline-flex size-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition',
                 active

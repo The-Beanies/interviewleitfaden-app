@@ -8,7 +8,7 @@ import { WIZARD_STEP_LABELS } from '@/config/defaults'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { cn } from '@/lib/utils'
-import { useInterviewStore, selectActiveInterview } from '@/stores/interview-store'
+import { useInterviewStore } from '@/stores/interview-store'
 import { useWizardStore } from '@/stores/wizard-store'
 
 import type { WizardStepProps } from '@/components/wizard/steps/types'
@@ -34,7 +34,7 @@ function createFallbackWizardState() {
 }
 
 export function WizardShell() {
-  const activeInterview = useInterviewStore(selectActiveInterview)
+  const activeInterview = useInterviewStore((state) => state.getActiveInterview())
 
   if (!activeInterview) {
     return (
@@ -48,7 +48,7 @@ export function WizardShell() {
 }
 
 function WizardShellInner() {
-  const activeInterview = useInterviewStore(selectActiveInterview)!
+  const activeInterview = useInterviewStore((state) => state.getActiveInterview())!
   const activeInterviewId = useInterviewStore((state) => state.activeInterviewId)
   const renameInterview = useInterviewStore((state) => state.renameInterview)
 

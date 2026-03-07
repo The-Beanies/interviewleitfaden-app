@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { TimerDisplay } from '@/components/ui/timer-display'
 import { useTimer } from '@/hooks/use-timer'
 import { segmentLabel } from '@/lib/labels'
-import { useInterviewStore, selectActiveInterview } from '@/stores/interview-store'
+import { useInterviewStore } from '@/stores/interview-store'
 import type { InterviewSectionKey } from '@/types'
 
 import { PauseOverlay } from './PauseOverlay'
@@ -17,7 +17,7 @@ import { SectionProgress } from './SectionProgress'
 import { SectionTimer } from './SectionTimer'
 
 export function ConductShell() {
-  const interview = useInterviewStore(selectActiveInterview)
+  const interview = useInterviewStore((state) => state.getActiveInterview())
 
   if (!interview) {
     return (
@@ -31,7 +31,7 @@ export function ConductShell() {
 }
 
 function ConductShellInner() {
-  const interview = useInterviewStore(selectActiveInterview)!
+  const interview = useInterviewStore((state) => state.getActiveInterview())!
 
   const [sectionIndex, setSectionIndex] = useState(() => {
     const current = interview.config.timerState.currentSectionKey

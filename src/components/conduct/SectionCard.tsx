@@ -5,14 +5,14 @@ import { useMemo, useState } from 'react'
 import { Plus, Trash2 } from 'lucide-react'
 import { INTERVIEW_SECTIONS } from '@/config/defaults'
 import { Textarea } from '@/components/ui/textarea'
-import { useInterviewStore, selectActiveInterview } from '@/stores/interview-store'
+import { useInterviewStore } from '@/stores/interview-store'
 import type { InterviewSectionKey } from '@/types'
 
 import { QuestionList } from './QuestionList'
 import { QuoteList } from './QuoteList'
 
 export function SectionCard({ sectionKey }: { sectionKey: InterviewSectionKey }) {
-  const interview = useInterviewStore(selectActiveInterview)!
+  const interview = useInterviewStore((state) => state.getActiveInterview())!
   const updateSectionNote = useInterviewStore((state) => state.updateSectionNote)
   const addCustomQuestion = useInterviewStore((state) => state.addCustomQuestion)
   const removeCustomQuestion = useInterviewStore((state) => state.removeCustomQuestion)

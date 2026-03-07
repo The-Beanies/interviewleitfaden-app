@@ -881,9 +881,6 @@ export const useInterviewStore = create<InterviewStore>()(
   ),
 )
 
-export const selectActiveInterview = (state: Pick<InterviewStore, 'interviews' | 'activeInterviewId'>) =>
-  state.interviews.find((i) => i.id === state.activeInterviewId) ?? state.interviews[0] ?? null
-
 export function getActiveInterviewConfig(): InterviewConfig | null {
   return useInterviewStore.getState().getActiveInterview()?.config ?? null
 }

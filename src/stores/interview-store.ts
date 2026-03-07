@@ -1,7 +1,8 @@
 'use client'
 
-import { create } from 'zustand'
+import { createWithEqualityFn } from 'zustand/traditional'
 import { persist } from 'zustand/middleware'
+import { shallow } from 'zustand/shallow'
 
 import {
   createDefaultInterview,
@@ -272,7 +273,7 @@ function normalizePersistedState(
   }
 }
 
-export const useInterviewStore = create<InterviewStore>()(
+export const useInterviewStore = createWithEqualityFn<InterviewStore>()(
   persist(
     (set, get) => ({
       interviews: [],
@@ -879,7 +880,15 @@ export const useInterviewStore = create<InterviewStore>()(
       },
     },
   ),
+  shallow,
 )
+
+/**
+ * Pure selector for the active interview — reads from the state parameter,
+ * NOT from get(). Safe with React 19 + Zustand 5 createWithEqualityFn.
+ */
+export const selectActiveInterview = (state: Pick<InterviewStore, 'interviews' | 'activeInterviewId'>) =>
+  state.interviews.find((i) => i.id === state.activeInterviewId) ?? state.interviews[0] ?? null
 
 export function getActiveInterviewConfig(): InterviewConfig | null {
   return useInterviewStore.getState().getActiveInterview()?.config ?? null

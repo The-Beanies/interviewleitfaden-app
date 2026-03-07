@@ -7,7 +7,7 @@ import MobileNav from '@/components/navigation/MobileNav'
 import ScrollToTop from '@/components/navigation/ScrollToTop'
 import { SummaryShell } from '@/components/summary/SummaryShell'
 import { useHydrated } from '@/lib/use-hydrated'
-import { useInterviewStore } from '@/stores/interview-store'
+import { useInterviewStore, selectActiveInterview } from '@/stores/interview-store'
 
 export default function PreviewPage() {
   return (
@@ -19,7 +19,7 @@ export default function PreviewPage() {
 
 function PreviewContent() {
   const hydrated = useHydrated()
-  const interview = useInterviewStore((state) => state.getActiveInterview())
+  const interview = useInterviewStore(selectActiveInterview)
   const searchParams = useSearchParams()
 
   useEffect(() => {

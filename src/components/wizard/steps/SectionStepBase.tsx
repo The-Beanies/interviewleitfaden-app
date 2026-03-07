@@ -11,7 +11,7 @@ import { InfoTooltip } from '@/components/ui/info-tooltip'
 import { QuoteBadge } from '@/components/ui/quote-badge'
 import { Textarea } from '@/components/ui/textarea'
 import { segmentLabel } from '@/lib/labels'
-import { useInterviewStore } from '@/stores/interview-store'
+import { useInterviewStore, selectActiveInterview } from '@/stores/interview-store'
 import type { InterviewSectionKey } from '@/types'
 
 interface SectionStepBaseProps {
@@ -19,7 +19,7 @@ interface SectionStepBaseProps {
 }
 
 export function SectionStepBase({ sectionKey }: SectionStepBaseProps) {
-  const interview = useInterviewStore((state) => state.getActiveInterview())
+  const interview = useInterviewStore(selectActiveInterview)
   const updateSectionNote = useInterviewStore((state) => state.updateSectionNote)
   const addQuote = useInterviewStore((state) => state.addQuote)
   const addCustomQuestion = useInterviewStore((state) => state.addCustomQuestion)

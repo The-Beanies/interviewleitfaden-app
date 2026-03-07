@@ -35,10 +35,11 @@ export function Header() {
     const active = state.interviews.find((i) => i.id === state.activeInterviewId)
     return active?.name ?? 'Unbenanntes Interview'
   })
-  const interviewOptions = useInterviewStore((state) =>
-    state.interviews.map((i) => ({ id: i.id, name: i.name })),
-  )
   const interviews = useInterviewStore((state) => state.interviews)
+  const interviewOptions = useMemo(
+    () => interviews.map((i) => ({ id: i.id, name: i.name })),
+    [interviews],
+  )
   const getActiveInterview = useInterviewStore((state) => state.getActiveInterview)
   const setActiveInterview = useInterviewStore((state) => state.setActiveInterview)
   const createInterview = useInterviewStore((state) => state.createInterview)

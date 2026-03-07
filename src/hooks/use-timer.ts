@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { useInterviewStore } from '@/stores/interview-store'
-import type { InterviewSectionKey } from '@/types'
+import type { InterviewSectionKey, TimerState } from '@/types'
 
 function nowIso() {
   return new Date().toISOString()
@@ -14,12 +14,39 @@ function msSince(iso: string | null) {
   return Math.max(0, Date.now() - new Date(iso).getTime())
 }
 
+/**
+ * Subscribe to timer state via individual primitives to avoid re-render loops.
+ * React 19 + Zustand 5 require getSnapshot to return stable references;
+ * subscribing to primitives (string, number, boolean) ensures Object.is equality.
+ */
+function useTimerState() {
+  const currentSectionKey = useInterviewStore(
+    (s) => s.interviews.find((i) => i.id === s.activeInterviewId)?.config.timerState.currentSectionKey ?? null,
+  )
+  const sectionStartedAt = useInterviewStore(
+    (s) => s.interviews.find((i) => i.id === s.activeInterviewId)?.config.timerState.sectionStartedAt ?? null,
+  )
+  const sectionElapsedMs = useInterviewStore(
+    (s) => s.interviews.find((i) => i.id === s.activeInterviewId)?.config.timerState.sectionElapsedMs ?? 0,
+  )
+  const totalElapsedMs = useInterviewStore(
+    (s) => s.interviews.find((i) => i.id === s.activeInterviewId)?.config.timerState.totalElapsedMs ?? 0,
+  )
+  const isPaused = useInterviewStore(
+    (s) => s.interviews.find((i) => i.id === s.activeInterviewId)?.config.timerState.isPaused ?? true,
+  )
+
+  return { currentSectionKey, sectionStartedAt, sectionElapsedMs, totalElapsedMs, isPaused }
+}
+
 export function useTimer(sectionKey: InterviewSectionKey, durationMinutes: number) {
-  const interview = useInterviewStore((state) => state.getActiveInterview())!
+  const timerState = useTimerState()
   const updateTimerState = useInterviewStore((state) => state.updateTimerState)
 
-  const timerState = interview.config.timerState
   const [tick, setTick] = useState(0)
+
+  // Use a ref to prevent the initialization effect from running more than once per section
+  const initRef = useRef<string | null>(null)
 
   useEffect(() => {
     // Auto-pause if session is stale (e.g. browser was closed overnight)
@@ -38,6 +65,10 @@ export function useTimer(sectionKey: InterviewSectionKey, durationMinutes: numbe
     }
 
     if (timerState.currentSectionKey !== sectionKey) {
+      // Prevent re-running if we already initialized this section
+      if (initRef.current === sectionKey) return
+      initRef.current = sectionKey
+
       const previousElapsed =
         timerState.currentSectionKey && !timerState.isPaused
           ? timerState.sectionElapsedMs + msSince(timerState.sectionStartedAt)
@@ -52,6 +83,9 @@ export function useTimer(sectionKey: InterviewSectionKey, durationMinutes: numbe
       })
       return
     }
+
+    // Reset the init guard when section matches
+    initRef.current = null
 
     if (!timerState.isPaused && !timerState.sectionStartedAt) {
       updateTimerState({ sectionStartedAt: nowIso() })

@@ -1,7 +1,8 @@
 'use client'
 
-import { create } from 'zustand'
+import { createWithEqualityFn } from 'zustand/traditional'
 import { persist } from 'zustand/middleware'
+import { shallow } from 'zustand/shallow'
 
 import type { WizardState } from '@/types'
 
@@ -34,7 +35,7 @@ function clampStep(step: number) {
   return Math.max(0, Math.min(MAX_STEP, step))
 }
 
-export const useWizardStore = create<WizardStore>()(
+export const useWizardStore = createWithEqualityFn<WizardStore>()(
   persist(
     (set, get) => ({
       currentInterviewId: null,
@@ -204,4 +205,5 @@ export const useWizardStore = create<WizardStore>()(
       }),
     },
   ),
+  shallow,
 )

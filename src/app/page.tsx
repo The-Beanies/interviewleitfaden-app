@@ -8,11 +8,11 @@ import ScrollToTop from '@/components/navigation/ScrollToTop'
 import { Skeleton } from '@/components/ui/skeleton'
 import { WizardShell } from '@/components/wizard/WizardShell'
 import { useHydrated } from '@/lib/use-hydrated'
-import { useInterviewStore } from '@/stores/interview-store'
+import { useInterviewStore, selectActiveInterview } from '@/stores/interview-store'
 
 export default function EditorPage() {
   const hydrated = useHydrated()
-  const interview = useInterviewStore((state) => state.getActiveInterview())
+  const interview = useInterviewStore(selectActiveInterview)
   const router = useRouter()
 
   useEffect(() => {
